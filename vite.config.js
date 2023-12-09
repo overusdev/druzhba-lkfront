@@ -16,6 +16,12 @@ export default defineConfig({
     quasar({
       sassVariables: 'src/quasar-variables.sass'
     })
-  ]
+  ],
+  server: {
+    host: true,
+    watch:{
+      usePolling: true
+    }
+  },
 })
 

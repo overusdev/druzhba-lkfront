@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@quasar/cli": "^2.3.0",
     "@quasar/extras": "^1.16.9",
     "@vueuse/core": "^10.6.1",
     "pinia": "^2.1.7",
