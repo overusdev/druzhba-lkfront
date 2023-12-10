@@ -9,6 +9,4 @@ COPY package.json /var/www/html/lk.druzhba-nn.site/package.json
 
 RUN npm install
 
-EXPOSE 3000
-
 CMD ["npm", "run", "dev"]

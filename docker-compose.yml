@@ -6,7 +6,8 @@ services:
     # env_file:
     #   - .env
     ports:
-      - 3000:3000
+      - 8000:8000
+    restart: always
     volumes:
       - .:/var/www/html/lk.druzhba-nn.site
       - "/var/www/html/lk.druzhba-nn.site/node_modules"
