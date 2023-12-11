@@ -1,0 +1,14 @@
+version: "3.3"
+services:
+  frontendlk:
+    build: .
+    image: lk.druzhba-nn.site
+    container_name: lk.druzhba-nn.site
+    # env_file:
+    #   - .env
+    ports:
+      - 8000:8000
+    restart: always
+    volumes:
+      - .:/var/www/html/lk.druzhba-nn.site
+      - "/var/www/html/lk.druzhba-nn.site/node_modules"
