@@ -3,7 +3,7 @@ FROM node:21-alpine3.17 AS build-stage
 
 WORKDIR /builddir
 
-COPY package*.json /app
+COPY package*.json /builddir
 
 RUN npm install
 
