@@ -13,13 +13,13 @@ RUN npm run build
 
 # CMD ["npm", "run", "dev"]
 
-FROM nginx:latest AS production-stage
+FROM nginx:1.25.3 AS production-stage
 
-WORKDIR /var/www
+# WORKDIR /var/www
 
-COPY --from=builder /builddir/dist/ /var/www
+COPY --from=build-stage /builddir/dist/ /var/www
 
-RUN nginx -t
+RUN nginx -T
 
 VOLUME /var/log/nginx
 EXPOSE 80
