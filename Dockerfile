@@ -13,7 +13,7 @@ RUN npm run build
 
 # CMD ["npm", "run", "dev"]
 
-FROM nginx:1.24.0-alpine AS production-stage
+FROM nginx:latest AS production-stage
 
 WORKDIR /var/www
 
