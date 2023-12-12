@@ -13,11 +13,11 @@ RUN npm run build
 
 # CMD ["npm", "run", "dev"]
 
-FROM nginx:stable-alpine AS production-stage
+FROM nginx:1.24.0-alpine AS production-stage
 
 WORKDIR /var/www
 
-COPY --from=builder /builddir/dist /var/www/lk.druzba-test.site
+COPY --from=builder /builddir/dist/ /var/www
 
 RUN nginx -t
 
