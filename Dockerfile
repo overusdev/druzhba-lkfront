@@ -15,16 +15,25 @@ RUN npm run build
 
 FROM nginx:stable-alpine AS production-stage
 
-# WORKDIR /var/www
+WORKDIR /var/www
 
-COPY --from=build-stage /builddir/dist /var/www
+COPY --from=builder /builddir/dist /var/www/lk.druzba-test.site
 
-COPY --from=build-stage nginx.conf /etc/nginx/sites-availabe/lk.druzba-test.site
+RUN nginx -t
 
-RUN nginx -T
-
-# VOLUME /var/log/nginx
+VOLUME /var/log/nginx
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+# WORKDIR /var/www
+
+# COPY --from=build-stage /builddir/dist /var/www
+
+# COPY --from=build-stage nginx.conf /etc/nginx/sites-availabe/lk.druzba-test.site
+
+# RUN nginx -T
+
+# # VOLUME /var/log/nginx
+# EXPOSE 80
+
+# CMD ["nginx", "-g", "daemon off;"]
 
