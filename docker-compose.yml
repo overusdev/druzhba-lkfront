@@ -2,13 +2,13 @@ version: "3.3"
 services:
   frontendlk:
     build: .
-    image: lk.druzba-test.site
-    container_name: lk.druzba-test.site
+    image: lkfront
+    container_name: lkfront
     # env_file:
     #   - .env
     ports:
-      - 8000:8000
+      - 8000:80
     restart: always
-    volumes:
-      - .:/var/www/lk.druzba-test.site
-      - "/var/www/lk.druzba-test.site/node_modules"
+    # volumes:
+    #   - .:/var/www/lk.druzba-test.site
+    #   - "/var/www/lk.druzba-test.site/node_modules"
