@@ -8,31 +8,55 @@
             <q-btn @click="decrementCount()">-</q-btn>
             <q-btn @click="incrementCount()">+</q-btn>
         </div>
-        <q-page padding>
-            <p v-for="n in 5" :key="n">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit nihil praesentium molestias a adipisci, dolore vitae odit, quidem consequatur optio voluptates asperiores pariatur eos numquam rerum delectus commodi perferendis voluptate?
-            </p>
-        </q-page>
+        <div v-if="loading">Loading...</div>
+
+        <ul v-else-if="result && result.pets">
+            <li v-for="user of result.pets" :key="user.id">
+                {{ user.id }}
+                {{ user.name || "not set" }}
+            </li>
+        </ul>
     </div>
 </template>
 
-<script setup>
-import { ref } from 'vue';
-import { computed } from 'vue';
+<script>
+import { ref, reactive, computed } from 'vue';
 import { useCounterStore } from '../stores/counter';
 import { storeToRefs } from 'pinia';
+import gql from 'graphql-tag';
+import { useQuery } from "@vue/apollo-composable";
 
-const drawer = ref(false);
-const store = useCounterStore();
+export default {
+  setup () {
+    const store = useCounterStore();
+    const count = computed(() => store.counter);
+    const doubleCountValue = computed(() => store.doubleCount);
+    const incrementCount = () => store.increment();
+    const decrementCount = () => store.counter--;
 
-// Option 2: use computed and functions to use the store
-const count = computed(() => store.counter);
-const doubleCountValue = computed(() => store.doubleCount);
-const incrementCount = () => store.increment(); // use action
-const decrementCount = () => store.counter--; // manipulate directly
+    const { counter, doubleCount } = storeToRefs(store);
+    const { increment } = store;
+    const { result, loading } = useQuery(gql`
+            query findAll {
+                pets {
+                    id
+                    name
+                    type
+                }
+            }
+        `)
 
-// Option 3: use destructuring to use the store in the template
-const { counter, doubleCount } = storeToRefs(store); // state and getters need "storeToRefs"
-const { increment } = store; // actions can be destructured directly
-
+        return {
+            count,
+            doubleCount,
+            incrementCount,
+            decrementCount,
+            doubleCountValue,
+            counter,
+            increment,
+            result,
+            loading,
+        }
+    },
+}
 </script>
