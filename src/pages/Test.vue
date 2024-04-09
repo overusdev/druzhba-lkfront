@@ -48,15 +48,19 @@ export default {
     const { counter, doubleCount } = storeToRefs(store);
     const { increment } = store;
     const PETS = gql`
-        query findAll {
-            pets {
+        query findAll($take: Int!) {
+            pets(take: $take) {
                 id
                 name
                 type
             }
         }
     `;
-    const { result, loading, error, refetch } = useQuery(PETS);
+    const { result, loading, error, refetch } = useQuery(PETS, () => ({
+        take: 4,
+        name: petData.name,
+        type: petData.type,
+    }));
     const pets = computed(() => result.value?.pets ?? [])
     const { mutate: sendPet, onDone } = useMutation(gql`
         mutation createPet($name: String!, $type: String!){
