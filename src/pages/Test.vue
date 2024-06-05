@@ -16,14 +16,29 @@
             <button @click="sendPet()">
                 Send pet
             </button>
+            <button @click="removePets()">
+                Remove pets by ids
+            </button>
+            <pre>{{ petGroup }}</pre>
         </div>
         <div v-if="loading">Loading...</div>
         <ul v-else-if="pets && pets.length">
-            <li v-for="user of pets" :key="user.id">
-                {{ user.id }}
-                {{ user.name || "not set" }}
-            </li>
+            <q-option-group
+                :options="options"
+                type="checkbox"
+                v-model="petGroup"
+            >
+            <template v-slot:label="opt">
+                <div class="row">
+                    <div>
+                        <span class="text-lime">{{ opt.label }} </span> 
+                        <span class="text-teal">{{ opt.type }}</span>
+                    </div>
+                </div>
+            </template>
+            </q-option-group>
         </ul>
+        <div v-else>No pets in DB</div>
     </div>
 </template>
 
@@ -43,6 +58,7 @@ export default {
         name: '',
         type: ''
     });
+    const petGroup = ref([]);
     const incrementCount = () => store.increment();
     const decrementCount = () => store.counter--;
     const { counter, doubleCount } = storeToRefs(store);
@@ -61,7 +77,13 @@ export default {
         name: petData.name,
         type: petData.type,
     }));
-    const pets = computed(() => result.value?.pets ?? [])
+    const pets = computed(() => result.value?.pets ?? []);
+    const options = computed(() => { 
+        return pets.value.map(function(obj) {
+            return {'label': obj.name, 'type': obj.type, 'value': obj.id};
+        });
+    });
+
     const { mutate: sendPet, onDone } = useMutation(gql`
         mutation createPet($name: String!, $type: String!){
             createPet(createPetInput: { name: $name, type: $type }) {
@@ -88,8 +110,30 @@ export default {
                 // },
             })
     );
+    const { mutate: removePets, onDone: onDoneRemovePets } = useMutation(gql`
+        mutation removeAll($ids: [Int!]!){
+            removePets(ids: $ids) {
+                id
+            }
+        }
+        `, () => ({
+                variables: {
+                    ids: petGroup.value
+                },
+            })
+    );
 
     onDone(() => {
+        petData.name = "";
+        petData.type = "";
+        petGroup.value = [];
+        refetch();
+    })
+
+    onDoneRemovePets(() => {
+        petData.name = "";
+        petData.type = "";
+        petGroup.value = [];
         refetch();
     })
 
@@ -108,7 +152,11 @@ export default {
             error,
             refetch,
             pets,
-            onDone
+            onDone,
+            petGroup,
+            options,
+            removePets,
+            onDoneRemovePets
         }
     },
 }

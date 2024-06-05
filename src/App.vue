@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="authStore.isSignedIn">
     <q-layout view="lHh Lpr lff" container style="height: 100vh" class="shadow-2 rounded-borders">
       <q-header elevated class="bg-cyan-8">
         <q-toolbar>
@@ -59,6 +59,15 @@
                 Drafts
               </q-item-section>
             </q-item>
+            <q-item clickable v-ripple>
+              <!-- <q-item-section avatar>
+                <q-icon name="drafts" />
+              </q-item-section> -->
+
+              <q-item-section @click="logOut">
+                Выйти
+              </q-item-section>
+            </q-item>
           </q-list>
         </q-scroll-area>
 
@@ -78,21 +87,62 @@
       </q-page-container>
     </q-layout>
   </div>
+  <div v-else>
+    <div class="auth">
+      <div class="auth__wrapper">
+        <h3>Отказано в доступе, авторизуйтесь</h3>
+        <div class="auth__form-wrapper">
+          <q-input
+            v-model="authPhone"
+            label="Номер телефона администратора без префикса"
+            mask="##########"
+            :dense="dense"
+            class="auth__input"
+            />
+            <q-btn
+              color="secondary"
+              label="Войти"
+              :disable="!canAuth"
+              @click="setAuth"/>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
 import { useGeometryStore } from './stores/geometry';
+import { useAuthStore } from './stores/auth';
 
 const drawer = ref(false);
-// const drawerHeight = ref(false);
 const store = useGeometryStore();
-
+const authStore = useAuthStore();
 const drawerHeight = computed(() => store.isMobile ? 200 : 300);
+const authPhone = ref('');
+const mockAuthPhone = ref('9535512834');
+const dense = ref(false);
+const canAuth = computed(() => authPhone.value === mockAuthPhone.value );
+
+function setAuth() {
+  authStore.signIn();
+}
+function logOut() {
+  const authPhone = '';
+  authStore.signOut();
+}
+
 
 </script>
-<style scoped>
+<style scoped lang="scss">
+.auth {
+  display: flex;
+  justify-content: center;
+
+  &__input {
+    margin-bottom: 24px;
+  }
+}
 .logo {
   height: 6em;
   padding: 1.5em;
