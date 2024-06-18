@@ -1,5 +1,6 @@
 <template>
-  <div v-if="authStore.isSignedIn">
+  {{ isAuthorized }}
+  <div v-if="isAuthorized">
     <q-layout view="lHh Lpr lff" container style="height: 100vh" class="shadow-2 rounded-borders">
       <q-header elevated class="bg-cyan-8">
         <q-toolbar>
@@ -38,7 +39,19 @@
                   Страница тестовая
                 </q-item-section>
               </q-item>
-          </router-link>
+            </router-link>
+
+            <router-link to="/users">
+              <q-item active clickable v-ripple>
+                <q-item-section avatar>
+                <q-icon name="people" />
+                </q-item-section>
+
+                <q-item-section>
+                  Садоводы
+                </q-item-section>
+              </q-item>
+            </router-link>
 
             <q-item clickable v-ripple>
               <q-item-section avatar>
@@ -60,9 +73,9 @@
               </q-item-section>
             </q-item>
             <q-item clickable v-ripple>
-              <!-- <q-item-section avatar>
-                <q-icon name="drafts" />
-              </q-item-section> -->
+              <q-item-section avatar>
+                <q-icon name="logout" />
+              </q-item-section>
 
               <q-item-section @click="logOut">
                 Выйти
@@ -114,6 +127,8 @@
 import { ref, computed } from 'vue';
 import { useGeometryStore } from './stores/geometry';
 import { useAuthStore } from './stores/auth';
+import { useRouter } from "vue-router";
+// import router from "@/router";
 
 const drawer = ref(false);
 const store = useGeometryStore();
@@ -123,13 +138,21 @@ const authPhone = ref('');
 const mockAuthPhone = ref('9535512834');
 const dense = ref(false);
 const canAuth = computed(() => authPhone.value === mockAuthPhone.value );
+const isAuthorized = computed(() => authStore.getCookie('name') === 'Sergey' );
+const router = useRouter();
 
 function setAuth() {
   authStore.signIn();
+  router.push({
+    name: "test",
+  });
 }
 function logOut() {
-  const authPhone = '';
+  authPhone.value = '';
   authStore.signOut();
+  router.push({
+    name: "main",
+  });
 }
 
 

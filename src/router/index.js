@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import TestPage from '../pages/Test.vue';
 import MainPage from '../pages/Main.vue';
+import UsersPage from '../pages/Users.vue';
 import AccountSignin from '../pages/AccountSignin.vue';
 import { useAuthStore } from '../stores/auth';
 
@@ -10,10 +11,26 @@ const router = createRouter({
         {
             path: '/',
             component: MainPage,
+            name: 'main',
+            meta: {
+                requiresAuth: true
+            }
         },
         {
             path: '/test',
+            name: 'test',
             component: TestPage,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/users',
+            name: 'users',
+            component: UsersPage,
+            meta: {
+                requiresAuth: true
+            }
         },
         {
             path: '/account-signin',
@@ -63,7 +80,9 @@ const router = createRouter({
 // router.beforeEach((to, from, next) => {
 //     const store = useAuthStore();
 //     const { isSignedIn, signIn } = store;
-//     if (to.matched.some(record => record.meta.requiresAuth) && !store.isSignedIn) {
+//     console.log(store.getCookie('name') === 'Sergey');
+//     // if (to.matched.some(record => record.meta.requiresAuth) && !store.isSignedIn) {
+//     if (to.matched.some(record => record.meta.requiresAuth) && store.getCookie('name') !== 'Sergey') {
 //     next({ name: 'account-signin', query: { next: to.fullPath } })
 //     } else {
 //     next()
