@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import TestPage from '../pages/Test.vue';
 import MainPage from '../pages/Main.vue';
 import UsersPage from '../pages/Users.vue';
+import AddUserPage from '../pages/AddUser.vue';
 import AccountSignin from '../pages/AccountSignin.vue';
 import { useAuthStore } from '../stores/auth';
 
@@ -28,6 +29,14 @@ const router = createRouter({
             path: '/users',
             name: 'users',
             component: UsersPage,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/add-user',
+            name: 'add-user',
+            component: AddUserPage,
             meta: {
                 requiresAuth: true
             }
