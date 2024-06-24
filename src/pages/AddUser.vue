@@ -4,7 +4,7 @@
             <h1 class="text-h3">Добавление нового садовода</h1>
             <q-space />
             <router-link to="/users">
-                <q-btn color="primary" icon="back" label="Назад" />
+                <q-btn color="primary" icon="arrow_back" label="Назад" />
             </router-link>
         </q-toolbar>
         <div>
