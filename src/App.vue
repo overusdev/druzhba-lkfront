@@ -53,6 +53,18 @@
               </q-item>
             </router-link>
 
+            <router-link to="/news">
+              <q-item active clickable v-ripple>
+                <q-item-section avatar>
+                <q-icon name="newspaper" />
+                </q-item-section>
+
+                <q-item-section>
+                  Новости
+                </q-item-section>
+              </q-item>
+            </router-link>
+
             <q-item clickable v-ripple>
               <q-item-section avatar>
                 <q-icon name="send" />

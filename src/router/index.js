@@ -4,6 +4,9 @@ import MainPage from '../pages/Main.vue';
 import UsersPage from '../pages/Users.vue';
 import AddUserPage from '../pages/AddUser.vue';
 import EditUserPage from '../pages/EditUser.vue';
+import NewsPage from '../pages/News.vue';
+import AddNewsPage from '../pages/AddNews.vue';
+import EditNewsPage from '../pages/EditNews.vue';
 import AccountSignin from '../pages/AccountSignin.vue';
 import { useAuthStore } from '../stores/auth';
 
@@ -46,6 +49,30 @@ const router = createRouter({
             path: '/edit-user/:id',
             name: 'edit-user',
             component: EditUserPage,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/news',
+            name: 'news',
+            component: NewsPage,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/add-news',
+            name: 'add-news',
+            component: AddNewsPage,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/edit-news/:id',
+            name: 'edit-news',
+            component: EditNewsPage,
             meta: {
                 requiresAuth: true
             }
