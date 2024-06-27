@@ -6,11 +6,11 @@
                     <router-link to="/users">
                         <q-btn flat round dense text-color="black" icon="arrow_back" />
                     </router-link>
-                    <q-toolbar-title>Добавление нового участка</q-toolbar-title>
+                    <q-toolbar-title>Редактироване данных участка {{ userData.area }}</q-toolbar-title>
                     <q-btn
                         color="secondary"
                         label="Сохранить данные"
-                        @click="sendUser"/>
+                        @click="editUser"/>
                 </q-toolbar>
             </q-header>
             <q-page-container>
@@ -35,14 +35,16 @@
 </template>
 
 <script>
-import { reactive } from 'vue';
+import { computed, reactive, onMounted } from 'vue';
 import gql from 'graphql-tag';
-import { useMutation } from "@vue/apollo-composable";
+import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 
 export default {
   setup () {
     const router = useRouter();
+    const route = useRoute();
     const userData = reactive({
         name: '',
         surname: '',
@@ -53,8 +55,28 @@ export default {
         password: '',
         role: '',
     });
-    const { mutate: sendUser, onDone } = useMutation(gql`
-        mutation createUser(
+    const USERS = gql`
+        query findOne($id: Int!) {
+            user(id: $id) {
+                id
+                name
+                surname
+                patronymic
+                area
+                phone
+                isAdmin
+                password
+                role
+            }
+        }
+    `;
+    const { result, loading, error, refetch } = useQuery(USERS, () => ({
+        id: Number(route.params.id),
+    }));
+    const user = computed(() => result ?? []);
+    const { mutate: editUser, onDone } = useMutation(gql`
+        mutation updateUser(
+            $id: Int!,
             $name: String!,
             $surname: String!,
             $patronymic: String!,
@@ -64,7 +86,8 @@ export default {
             $password: String!,
             $role: String!,
         ){
-            createUser(createUserInput: { 
+            updateUser(updateUserInput: {
+                id: $id,
                 name: $name,
                 surname: $surname,
                 patronymic: $patronymic,
@@ -81,6 +104,7 @@ export default {
             }
         `, () => ({
                 variables: {
+                    id: Number(route.params.id),
                     name: userData.name,
                     surname: userData.surname,
                     patronymic: userData.patronymic,
@@ -99,11 +123,31 @@ export default {
         });
     })
 
+    onMounted(async () => {
+        const refetchQuery = await refetch();
+        if(refetchQuery.data.user) {
+            userData.id = refetchQuery.data.user.id;
+            userData.name = refetchQuery.data.user.name;
+            userData.surname = refetchQuery.data.user.surname;
+            userData.patronymic = refetchQuery.data.user.patronymic;
+            userData.area = refetchQuery.data.user.area;
+            userData.phone = refetchQuery.data.user.phone;
+            userData.isAdmin = refetchQuery.data.user.isAdmin;
+            userData.password = refetchQuery.data.user.password;
+            userData.role = refetchQuery.data.user.role;
+        }
+    });
+
         return {
-            sendUser,
+            editUser,
             userData,
             onDone,
+            result,
+            loading,
+            refetch,
             router,
+            route,
+            user,
         }
     },
 }

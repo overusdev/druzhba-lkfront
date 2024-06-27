@@ -3,6 +3,7 @@ import TestPage from '../pages/Test.vue';
 import MainPage from '../pages/Main.vue';
 import UsersPage from '../pages/Users.vue';
 import AddUserPage from '../pages/AddUser.vue';
+import EditUserPage from '../pages/EditUser.vue';
 import AccountSignin from '../pages/AccountSignin.vue';
 import { useAuthStore } from '../stores/auth';
 
@@ -37,6 +38,14 @@ const router = createRouter({
             path: '/add-user',
             name: 'add-user',
             component: AddUserPage,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/edit-user/:id',
+            name: 'edit-user',
+            component: EditUserPage,
             meta: {
                 requiresAuth: true
             }

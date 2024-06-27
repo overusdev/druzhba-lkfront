@@ -3,6 +3,7 @@ import { createPinia } from 'pinia'
 import router from "./router";
 import { Quasar } from 'quasar';
 
+import '@quasar/extras/roboto-font/roboto-font.css';
 import '@quasar/extras/roboto-font-latin-ext/roboto-font-latin-ext.css';
 import '@quasar/extras/material-icons/material-icons.css';
 import '@quasar/extras/material-icons-outlined/material-icons-outlined.css';
@@ -20,14 +21,10 @@ import { ApolloClients } from "@vue/apollo-composable";
 import 'quasar/src/css/index.sass';
 import App from './App.vue';
 const pinia = createPinia();
-// const app = createApp(App);
 
 const app = createApp({
   setup() {
     provide(ApolloClients, apolloClients);
-    // provide(ApolloClients, {
-    //   default: apolloClient,
-    // })
   },
   render: () => h(App),
 });

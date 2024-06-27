@@ -48,7 +48,7 @@
                 </q-item-section>
 
                 <q-item-section>
-                  Садоводы
+                  Участки
                 </q-item-section>
               </q-item>
             </router-link>
