@@ -17,7 +17,7 @@
       >
         <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
           <q-list padding>
-            <router-link to="/">
+            <!-- <router-link to="/">
               <q-item clickable v-ripple>
                 <q-item-section avatar>
                   <q-icon name="inbox" />
@@ -39,12 +39,12 @@
                   Страница тестовая
                 </q-item-section>
               </q-item>
-            </router-link>
+            </router-link> -->
 
-            <router-link to="/users">
-              <q-item active clickable v-ripple>
+            <router-link to="/users" class="router-link">
+              <q-item clickable v-ripple>
                 <q-item-section avatar>
-                <q-icon name="people" />
+                <q-icon name="people" color="blue" />
                 </q-item-section>
 
                 <q-item-section>
@@ -53,10 +53,10 @@
               </q-item>
             </router-link>
 
-            <router-link to="/news">
-              <q-item active clickable v-ripple>
+            <router-link to="/news" class="router-link">
+              <q-item clickable v-ripple>
                 <q-item-section avatar>
-                <q-icon name="newspaper" />
+                <q-icon name="newspaper" color="orange" />
                 </q-item-section>
 
                 <q-item-section>
@@ -65,28 +65,21 @@
               </q-item>
             </router-link>
 
+            <router-link to="/ads" class="router-link">
+              <q-item clickable v-ripple>
+                <q-item-section avatar>
+                <q-icon name="description" color="green"/>
+                </q-item-section>
+
+                <q-item-section>
+                  Объявления
+                </q-item-section>
+              </q-item>
+            </router-link>
+
             <q-item clickable v-ripple>
               <q-item-section avatar>
-                <q-icon name="send" />
-              </q-item-section>
-
-              <q-item-section>
-                Send
-              </q-item-section>
-            </q-item>
-
-            <q-item clickable v-ripple>
-              <q-item-section avatar>
-                <q-icon name="drafts" />
-              </q-item-section>
-
-              <q-item-section>
-                Drafts
-              </q-item-section>
-            </q-item>
-            <q-item clickable v-ripple>
-              <q-item-section avatar>
-                <q-icon name="logout" />
+                <q-icon name="logout" color="red"/>
               </q-item-section>
 
               <q-item-section @click="logOut">
@@ -156,7 +149,7 @@ const router = useRouter();
 function setAuth() {
   authStore.signIn();
   router.push({
-    name: "test",
+    name: "users",
   });
 }
 function logOut() {
@@ -170,6 +163,10 @@ function logOut() {
 
 </script>
 <style scoped lang="scss">
+.router-link {
+  color: #000;
+  text-decoration: none;
+}
 .auth {
   display: flex;
   justify-content: center;
