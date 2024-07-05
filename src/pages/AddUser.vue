@@ -27,6 +27,11 @@
                             mask="##########"
                         />
                         <q-input v-model="userData.password" label="Пароль участка" />
+                        <q-input
+                            label="Комментарии"
+                            v-model="userData.note"
+                            autogrow
+                        />
                     </div>
                 </q-page>
             </q-page-container>
@@ -52,6 +57,7 @@ export default {
         phone: '',
         password: '',
         role: '',
+        note: '',
     });
     const { mutate: sendUser, onDone } = useMutation(gql`
         mutation createUser(
@@ -63,6 +69,7 @@ export default {
             $phone: String!,
             $password: String!,
             $role: String!,
+            $note: String!,
         ){
             createUser(createUserInput: { 
                 name: $name,
@@ -73,6 +80,7 @@ export default {
                 phone: $phone,
                 password: $password,
                 role: $role,
+                note: $note,
             }) {
                     id
                     name
@@ -89,6 +97,7 @@ export default {
                     phone: userData.phone,
                     password: userData.password,
                     role: userData.role,
+                    note: userData.note,
                 },
             })
     );

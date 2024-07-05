@@ -1,5 +1,5 @@
 <template>
-    <div class="users q-pa-md">
+    <div class="news q-pa-md">
         <q-layout 
             view="lHh lpr lFf"
             container
@@ -51,10 +51,10 @@
             </q-page-container>
         </q-layout>
         <q-dialog v-model="showRemovePopup">
-            <q-card class="users__dialog">
+            <q-card class="news__dialog">
                 <q-card-section class="q-pt-xl">
                     <p class="text text-red">Действительно удалить новость?</p>
-                    <q-btn flat no-caps icon="close" class="users__close-icon" v-close-popup />
+                    <q-btn flat no-caps icon="close" class="news__close-icon" v-close-popup />
                     <q-btn
                         color="red"
                         icon="delete"

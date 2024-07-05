@@ -1,5 +1,5 @@
 <template>
-    <div class="q-pa-md">
+    <div class="user q-pa-md">
         <q-layout view="lHh lpr lFf" container style="min-height: 800px" class="shadow-2 rounded-borders">
             <q-header bordered class="bg-white text-black">
                 <q-toolbar>
@@ -11,6 +11,11 @@
                         color="secondary"
                         label="Сохранить данные"
                         @click="editUser"/>
+                    <q-btn
+                        class="q-ml-sm"
+                        color="red"
+                        icon="delete"
+                        @click="upplyRemoveUser"/>
                 </q-toolbar>
             </q-header>
             <q-page-container>
@@ -27,15 +32,34 @@
                             mask="##########"
                         />
                         <q-input v-model="userData.password" label="Пароль участка" />
+                        <q-input
+                            class="q-mt-xl"
+                            label="Комментарии"
+                            v-model="userData.note"
+                            autogrow
+                        />
                     </div>
                 </q-page>
             </q-page-container>
         </q-layout>
+        <q-dialog v-model="showRemovePopup">
+            <q-card class="user__dialog">
+                <q-card-section class="q-pt-xl">
+                    <p class="text text-red">Действительно удалить все данные по участку?</p>
+                    <q-btn flat no-caps icon="close" class="user__close-icon" v-close-popup />
+                    <q-btn
+                        color="red"
+                        icon="delete"
+                        label="Да, удалить"
+                        @click="removeUser"/>
+                </q-card-section>
+            </q-card>
+        </q-dialog>
     </div>
 </template>
 
 <script>
-import { computed, reactive, onMounted } from 'vue';
+import { ref, computed, reactive, onMounted } from 'vue';
 import gql from 'graphql-tag';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
@@ -43,6 +67,8 @@ import { useRoute } from "vue-router";
 
 export default {
   setup () {
+    const disableEditButton = ref(true);
+    const showRemovePopup = ref(false);
     const router = useRouter();
     const route = useRoute();
     const userData = reactive({
@@ -54,6 +80,7 @@ export default {
         phone: '',
         password: '',
         role: '',
+        note: ''
     });
     const USERS = gql`
         query findOne($id: Int!) {
@@ -67,6 +94,7 @@ export default {
                 isAdmin
                 password
                 role
+                note
             }
         }
     `;
@@ -85,6 +113,7 @@ export default {
             $phone: String!,
             $password: String!,
             $role: String!,
+            $note: String!,
         ){
             updateUser(updateUserInput: {
                 id: $id,
@@ -96,6 +125,7 @@ export default {
                 phone: $phone,
                 password: $password,
                 role: $role,
+                note: $note,
             }) {
                     id
                     name
@@ -113,6 +143,20 @@ export default {
                     phone: userData.phone,
                     password: userData.password,
                     role: userData.role,
+                    note: userData.note,
+                },
+            })
+    );
+
+    const { mutate: removeUser, onDone: onDoneremoveUser } = useMutation(gql`
+        mutation removeAll($ids: [Int!]!){
+            removeUsers(ids: $ids) {
+                id
+            }
+        }
+        `, () => ({
+                variables: {
+                    ids: [Number(route.params.id)]
                 },
             })
     );
@@ -122,6 +166,16 @@ export default {
             name: "users",
         });
     })
+
+    onDoneremoveUser(() => {
+        router.push({
+            name: "users",
+        });
+    })
+
+    function upplyRemoveUser() {
+        showRemovePopup.value = true;
+    }
 
     onMounted(async () => {
         const refetchQuery = await refetch();
@@ -135,6 +189,7 @@ export default {
             userData.isAdmin = refetchQuery.data.user.isAdmin;
             userData.password = refetchQuery.data.user.password;
             userData.role = refetchQuery.data.user.role;
+            userData.note = refetchQuery.data.user.note;
         }
     });
 
@@ -148,7 +203,25 @@ export default {
             router,
             route,
             user,
+            disableEditButton,
+            showRemovePopup,
+            onDoneremoveUser,
+            removeUser,
+            upplyRemoveUser
         }
     },
 }
 </script>
+
+<style scoped lang="scss">
+.user {
+    &__dialog {
+        position: relative;
+    }
+    &__close-icon {
+        position: absolute;
+        top: 10px;
+        right: 6px;
+    }
+}
+</style>
