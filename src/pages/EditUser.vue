@@ -32,6 +32,7 @@
                             mask="##########"
                         />
                         <q-input v-model="userData.password" label="Пароль участка" />
+                        <q-input v-model="userData.bcryptpassword" label="bcrypt-пароль участка" disabled />
                         <q-input
                             class="q-mt-xl"
                             label="Комментарии"
@@ -79,6 +80,7 @@ export default {
         area: '',
         phone: '',
         password: '',
+        bcryptpassword: '',
         role: '',
         note: ''
     });
@@ -93,6 +95,7 @@ export default {
                 phone
                 isAdmin
                 password
+                bcryptpassword
                 role
                 note
             }
@@ -188,6 +191,7 @@ export default {
             userData.phone = refetchQuery.data.user.phone;
             userData.isAdmin = refetchQuery.data.user.isAdmin;
             userData.password = refetchQuery.data.user.password;
+            userData.bcryptpassword = refetchQuery.data.user.bcryptpassword;
             userData.role = refetchQuery.data.user.role;
             userData.note = refetchQuery.data.user.note;
         }

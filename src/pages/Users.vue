@@ -78,11 +78,11 @@ export default {
     const showRemovePopup = ref(false);
     const columns = [
         {
-            name: 'name',
+            name: 'area',
             required: true,
-            label: 'Имя',
+            label: 'Участок',
             align: 'left',
-            field: row => row.name,
+            field: row => row.area,
             format: val => `${val}`,
             sortable: true
         },
@@ -96,20 +96,20 @@ export default {
             sortable: true
         },
         {
+            name: 'name',
+            required: true,
+            label: 'Имя',
+            align: 'left',
+            field: row => row.name,
+            format: val => `${val}`,
+            sortable: true
+        },
+        {
             name: 'patronymic',
             required: true,
             label: 'Отчество',
             align: 'left',
             field: row => row.patronymic || '-',
-            format: val => `${val}`,
-            sortable: true
-        },
-        {
-            name: 'area',
-            required: true,
-            label: 'Участок',
-            align: 'left',
-            field: row => row.area,
             format: val => `${val}`,
             sortable: true
         },
