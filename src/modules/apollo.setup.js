@@ -1,19 +1,33 @@
 import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client/core'
+import { setContext } from "apollo-link-context";
 
-// HTTP connection to the API
+const cache = new InMemoryCache();
 const httpLink = createHttpLink({
-  // You should use an absolute URL here
   uri: 'http://localhost:3001/graphql',
-})
+});
 
-// Cache implementation
-const cache = new InMemoryCache()
+const authLink = setContext((_, { headers }) => {
+  const jwt = getCookie('dr_access_token');
 
-// Create the apollo client
+  return {
+    headers: {
+      ...headers,
+      authorization: jwt ? `Bearer ${jwt}` : "",
+    },
+  };
+});
+
 const apolloClient = new ApolloClient({
-  link: httpLink,
+  link: authLink.concat(httpLink),
   cache,
-})
+});
+
+function getCookie(name) {
+  let matches = document.cookie.match(new RegExp(
+    "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+  ));
+  return matches ? decodeURIComponent(matches[1]) : undefined;
+}
 
 export default {
     default: apolloClient,

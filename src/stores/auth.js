@@ -2,7 +2,6 @@ import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
 
 export const useAuthStore = defineStore('auth', () => {
-    const isSignedIn = ref(false);
     const checkIsSignedByCookie = computed(() => getCookie('user') === 'John');
 
     function getCookie(name) {
@@ -13,10 +12,10 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     function deleteCookie(name) {
-        setCookie(name, "", {
-          'max-age': -1
-        })
-      }
+      setCookie(name, "", {
+        'max-age': -1
+      })
+    }
     
     function setCookie(name, value, options = {}) {
     
@@ -43,20 +42,8 @@ export const useAuthStore = defineStore('auth', () => {
         document.cookie = updatedCookie;
     }
 
-    function signIn() {
-      this.isSignedIn = true;
-      setCookie('name', 'Sergey');
-    }
-
-    function signOut() {
-      this.isSignedIn = false;
-      deleteCookie('name');
-    }
-
     return {
-        isSignedIn,
-        signIn,
-        signOut,
+        setCookie,
         getCookie,
         deleteCookie,
         checkIsSignedByCookie,

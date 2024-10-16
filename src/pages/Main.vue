@@ -1,6 +1,6 @@
 <template>
     <div class="q-pa-md">
-        <h1 class="text-h3">This is a Main route-page</h1>
+        <h1 class="text-h3">Режим отладки...</h1>
         <div class="q-pa-md q-gutter-sm">
             <q-editor
                 v-model="editor"
