@@ -71,8 +71,8 @@
           <q-avatar size="56px" class="q-mb-sm">
             <img src="https://cdn.quasar.dev/img/boy-avatar.png">
           </q-avatar>
-          <div class="text-weight-bold">Сергей Администратор</div>
-          <div>@overus</div>
+          <div v-if="adminName" class="text-weight-bold">{{ adminName.username }}</div>
+          <div>Администратор</div>
         </div>
       </q-img>
     </q-drawer>
@@ -84,12 +84,13 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, reactive, onMounted } from 'vue';
 import { useGeometryStore } from './stores/geometry';
 import { useAuthStore } from './stores/auth';
 
 const drawer = ref(false);
 const loading = ref(false);
+const adminName = ref('');
 const store = useGeometryStore();
 const authStore = useAuthStore();
 const drawerHeight = computed(() => store.isMobile ? 200 : 300);
@@ -100,8 +101,11 @@ function logOut() {
   setTimeout(() => {
     window.location.replace('http://localhost:8004/');
   }, 1000);
-
 }
+
+onMounted(async () => {
+  adminName.value = authStore.parseJwt(authStore.getCookie('dr_access_token'));
+});
 
 </script>
 <style scoped lang="scss">

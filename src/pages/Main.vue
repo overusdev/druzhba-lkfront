@@ -23,8 +23,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const editor = ref('What you see is <b>what</b> you get.');
 
 function pasteCapture(e) {
@@ -33,5 +35,11 @@ function pasteCapture(e) {
 function dropCapture(e) {
     console.log(e);
 }
+
+onMounted(() => {
+    router.push({
+        name: "users",
+    });
+});
 
 </script>
