@@ -1,9 +1,23 @@
 import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client/core'
 import { setContext } from "apollo-link-context";
+import { onError } from '@apollo/client/link/error';
+import { logErrorMessages } from '@vue/apollo-util';
+import { ApolloLink, Observable } from 'apollo-link';
+
 
 const cache = new InMemoryCache();
 const httpLink = createHttpLink({
-  uri: 'http://localhost:3001/graphql',
+  uri: 'http://localhost:3001/graphql'
+});
+
+// Handle errors
+const errorLink = onError(error => {
+  if(error.response.errors[0].message === 'Unauthorized') {
+    window.location.replace('http://localhost:8004');
+  }
+  if (process.env.NODE_ENV !== 'production') {
+    logErrorMessages(error);
+  }
 });
 
 const authLink = setContext((_, { headers }) => {
@@ -18,7 +32,12 @@ const authLink = setContext((_, { headers }) => {
 });
 
 const apolloClient = new ApolloClient({
-  link: authLink.concat(httpLink),
+  link: ApolloLink.from([
+    errorLink,
+    authLink,
+    httpLink
+  ]),
+  credentials: 'include',
   cache,
 });
 

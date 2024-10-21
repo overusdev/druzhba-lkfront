@@ -32,7 +32,12 @@
                             mask="##########"
                         />
                         <q-input v-model="userData.password" label="Пароль участка" />
-                        <q-input v-model="userData.bcryptpassword" label="bcrypt-пароль участка" disabled />
+                        <q-input
+                            v-model="userData.bcryptpassword"
+                            label="bcrypt-пароль участка"
+                            readonly
+                            class="user__input user__input--readonly"
+                        />
                         <q-input
                             class="q-mt-xl"
                             label="Комментарии"
@@ -226,6 +231,11 @@ export default {
         position: absolute;
         top: 10px;
         right: 6px;
+    }
+    &__input {
+        &--readonly {
+            opacity: .5;
+        }
     }
 }
 </style>
