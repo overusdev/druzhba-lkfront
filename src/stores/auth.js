@@ -1,11 +1,12 @@
 import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
+import { ref, reactive, computed } from 'vue';
 
 export const useAuthStore = defineStore('auth', () => {
     const checkIsSignedByCookie = computed(() => getCookie('user') === 'John');
-    const adminName = ref('');
-    const isSignedIn = computed(() => !!adminName.value);
-    const isNotAdmin = ref(false);
+    const adminData = reactive({
+      name: '',
+      isAdmin: '',
+    });
 
     function getCookie(name) {
         let matches = document.cookie.match(new RegExp(
@@ -67,8 +68,6 @@ export const useAuthStore = defineStore('auth', () => {
         deleteCookie,
         checkIsSignedByCookie,
         parseJwt,
-        adminName,
-        isSignedIn,
-        isNotAdmin
+        adminData,
     }
 });

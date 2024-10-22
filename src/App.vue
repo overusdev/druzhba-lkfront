@@ -1,5 +1,5 @@
 <template>
-  <tempalte v-if="authStore.isNotAdmin">
+  <tempalte v-if="!authStore.adminData.isAdmin">
     <div class="no-access text-weight-bold">Отказано в доступе. Вы не являетесь администратором</div>
   </tempalte>
   <tempalte v-else>
@@ -75,7 +75,7 @@
             <q-avatar size="56px" class="q-mb-sm">
               <img src="https://cdn.quasar.dev/img/boy-avatar.png">
             </q-avatar>
-            <div v-if="authStore.adminName" class="text-weight-bold">{{ authStore.adminName.username }}</div>
+            <div v-if="authStore.adminData.name" class="text-weight-bold">{{ authStore.adminData.name }}</div>
             <div>Администратор</div>
           </div>
         </q-img>
@@ -108,7 +108,16 @@ function logOut() {
 }
 
 onMounted(async () => {
-  authStore.adminName = authStore.parseJwt(authStore.getCookie('dr_access_token'));
+  // authStore.adminName = authStore.parseJwt(authStore.getCookie('dr_access_token'));
+  authStore.adminData.name = authStore.parseJwt(authStore.getCookie('dr_access_token')).username;
+  authStore.adminData.isAdmin = authStore.parseJwt(authStore.getCookie('dr_access_token')).isAdmin;
+
+  if(!authStore.adminData.isAdmin) {
+    authStore.deleteCookie('dr_access_token');
+    setTimeout(() => {
+      window.location.replace('http://localhost:8004/');
+    }, 1000);
+  }
 
   const tokenExpires = 1729621801;
 
