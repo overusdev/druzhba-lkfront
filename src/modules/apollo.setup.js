@@ -4,15 +4,49 @@ import { onError } from '@apollo/client/link/error';
 import { logErrorMessages } from '@vue/apollo-util';
 import { ApolloLink, Observable } from 'apollo-link';
 
-
 const cache = new InMemoryCache();
 const httpLink = createHttpLink({
   uri: 'http://localhost:3001/graphql'
 });
 
+function setCookie(name, value, options = {}) {
+    
+  options = {
+    path: '/',
+    // при необходимости добавьте другие значения по умолчанию
+    ...options
+  };
+
+  if (options.expires instanceof Date) {
+    options.expires = options.expires.toUTCString();
+  }
+
+  let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+
+  for (let optionKey in options) {
+    updatedCookie += "; " + optionKey;
+    let optionValue = options[optionKey];
+    if (optionValue !== true) {
+      updatedCookie += "=" + optionValue;
+    }
+  }
+
+  document.cookie = updatedCookie;
+}
+
+function deleteCookie(name) {
+  setCookie(name, "", {
+    'max-age': -1
+  })
+}
+
 // Handle errors
 const errorLink = onError(error => {
   if(error.response.errors[0].message === 'Unauthorized') {
+    let date = new Date(Date.now());
+    let dateNow = date.getTime() / 1000;
+    console.log('Unauthorized', dateNow );
+    deleteCookie('dr_access_token');
     window.location.replace('http://localhost:8004');
   }
   if (process.env.NODE_ENV !== 'production') {

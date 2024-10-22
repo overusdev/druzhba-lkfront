@@ -12,6 +12,7 @@
     "@apollo/client": "^3.9.10",
     "@quasar/cli": "^2.3.0",
     "@quasar/extras": "^1.16.9",
+    "@tinymce/tinymce-vue": "^6.1.0",
     "@vue/apollo-composable": "^4.0.2",
     "@vue/apollo-util": "^4.0.0-beta.6",
     "@vueuse/core": "^10.6.1",

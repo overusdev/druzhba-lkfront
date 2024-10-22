@@ -120,6 +120,7 @@ export default {
             $area: String!,
             $phone: String!,
             $password: String!,
+            $bcryptpassword: String!,
             $role: String!,
             $note: String!,
         ){
@@ -132,6 +133,7 @@ export default {
                 area: $area,
                 phone: $phone,
                 password: $password,
+                bcryptpassword: $bcryptpassword,
                 role: $role,
                 note: $note,
             }) {
@@ -150,6 +152,7 @@ export default {
                     area: userData.area,
                     phone: userData.phone,
                     password: userData.password,
+                    bcryptpassword: userData.password,
                     role: userData.role,
                     note: userData.note,
                 },

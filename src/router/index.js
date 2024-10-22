@@ -10,7 +10,6 @@ import AddNewsPage from '../pages/AddNews.vue';
 import AddAdPage from '../pages/AddAd.vue';
 import EditNewsPage from '../pages/EditNews.vue';
 import EditAdPage from '../pages/EditAd.vue';
-import AccountSignin from '../pages/AccountSignin.vue';
 import { useAuthStore } from '../stores/auth';
 
 const router = createRouter({
@@ -104,20 +103,27 @@ const router = createRouter({
                 requiresAuth: true
             }
         },
-        {
-            path: '/account-signin',
-            component: AccountSignin,
-            name: 'account-signin',
-        },
     ],
   });
 
-// router.beforeEach((to, from, next) => {
-//     if (to.matched.some(record => record.meta.requiresAuth) && !store.getters['auth/isSignedIn']) {
-//     next({ name: 'account-signin', query: { next: to.fullPath } })
-//     } else {
-//     next()
-//     }
-// })
+router.beforeEach((to, from, next) => {
+    const store = useAuthStore();
+    const isAdmin = store.parseJwt(getCookie('dr_access_token')).isAdmin;
+    function getCookie(name) {
+        let matches = document.cookie.match(new RegExp(
+          "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+        ));
+        return matches ? decodeURIComponent(matches[1]) : undefined;
+    }
+
+    if(!isAdmin) {
+        store.isNotAdmin = true;
+        setTimeout(() => {
+        window.location.replace('http://localhost:8004/');
+        }, 1000);
+    } else {
+        next()
+    }
+})
 
 export default router;
