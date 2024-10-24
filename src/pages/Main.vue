@@ -1,6 +1,6 @@
 <template>
     <div class="q-pa-md">
-        <h1 class="text-h3">This is a Main route-page</h1>
+        <h1 class="text-h3">Режим отладки...</h1>
         <div class="q-pa-md q-gutter-sm">
             <q-editor
                 v-model="editor"
@@ -23,8 +23,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const editor = ref('What you see is <b>what</b> you get.');
 
 function pasteCapture(e) {
@@ -33,5 +35,11 @@ function pasteCapture(e) {
 function dropCapture(e) {
     console.log(e);
 }
+
+onMounted(() => {
+    router.push({
+        name: "users",
+    });
+});
 
 </script>
