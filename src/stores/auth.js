@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref, reactive, computed } from 'vue';
+import { decodeProtectToken } from './../modules/decodeProtectToken'
 
 export const useAuthStore = defineStore('auth', () => {
     const checkIsSignedByCookie = computed(() => getCookie('user') === 'John');
@@ -12,11 +13,14 @@ export const useAuthStore = defineStore('auth', () => {
         let matches = document.cookie.match(new RegExp(
           "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
         ));
-        return matches ? decodeURIComponent(matches[1]) : undefined;
+        return matches
+          ? decodeProtectToken({ apiToken: decodeURIComponent(matches[1]) })
+          : undefined;
     }
 
     function parseJwt (token) {
         if(!token) {
+          console.log('Token not provided');
           window.location.replace('http://localhost:8004');
           return;
         }

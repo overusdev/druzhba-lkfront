@@ -106,25 +106,4 @@ const router = createRouter({
     ],
   });
 
-// router.beforeEach((to, from, next) => {
-//     const store = useAuthStore();
-//     // const isAdmin = store.adminData.isAdmin;
-//     // const isAdmin = store.parseJwt(getCookie('dr_access_token')).isAdmin;
-//     // function getCookie(name) {
-//     //     let matches = document.cookie.match(new RegExp(
-//     //       "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
-//     //     ));
-//     //     return matches ? decodeURIComponent(matches[1]) : undefined;
-//     // }
-
-//     if(!store.adminData.isAdmin) {
-//         // store.isNotAdmin = true;
-//         setTimeout(() => {
-//             window.location.replace('http://localhost:8004/');
-//         }, 1000);
-//     } else {
-//         next()
-//     }
-// })
-
 export default router;

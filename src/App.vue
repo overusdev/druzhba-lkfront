@@ -119,8 +119,6 @@ onMounted(async () => {
     }, 1000);
   }
 
-  const tokenExpires = 1729621801;
-
   async function checkTokenExpires(tokenExpires) {
     let date = new Date(Date.now());
     let dateNow = date.getTime() / 1000;

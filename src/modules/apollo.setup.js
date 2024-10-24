@@ -3,6 +3,7 @@ import { setContext } from "apollo-link-context";
 import { onError } from '@apollo/client/link/error';
 import { logErrorMessages } from '@vue/apollo-util';
 import { ApolloLink, Observable } from 'apollo-link';
+import { decodeProtectToken } from './../modules/decodeProtectToken'
 
 const cache = new InMemoryCache();
 const httpLink = createHttpLink({
@@ -79,7 +80,9 @@ function getCookie(name) {
   let matches = document.cookie.match(new RegExp(
     "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
   ));
-  return matches ? decodeURIComponent(matches[1]) : undefined;
+  return matches
+    ? decodeProtectToken({ apiToken: decodeURIComponent(matches[1])})
+    : undefined;
 }
 
 export default {
