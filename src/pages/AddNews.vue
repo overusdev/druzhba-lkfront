@@ -20,13 +20,44 @@
                         
                         <div class="q-mb-lg">
                             <p class="text">Описание</p>
-                            <q-editor
-                                v-model="newsData.theme"
-                                min-height="5rem"
-                                @paste.native="evt => pasteCapture(evt)"
-                                @drop.native="evt => dropCapture(evt)"
+                            <TinyEditor
+                                title="Описание"
                             />
-                        </div>
+
+                            <!-- <input
+                                ref="fileInput"
+                                @change="attachFile($event)"
+                                type="file" id="js-file" accept=".jpeg,.png,jpg,.txt,.css,.html">
+                            <br>
+                            <textarea
+                                class="row"
+                                ref="myReference"
+                                v-model="newsData.theme"
+                                name="text"
+                                id="text"
+                                @drop="handleFileDrop($event)"
+                            >
+                            </textarea> -->
+                            <!-- <Editor
+                                api-key="no-api-key"
+                                :tinymce-script-src="tinymceScriptSrc"
+                                v-model="newsData.theme"
+                                :init="{
+                                toolbar_mode: 'sliding',
+                                plugins: plugins,
+                                language: 'ru',
+                                toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+                                tinycomments_mode: 'embedded',
+                                tinycomments_author: 'Author name',
+                                images_upload_handler: fileUpload,
+                                mergetags_list: [
+                                    { value: 'First.Name', title: 'First Name' },
+                                    { value: 'Email', title: 'Email' },
+                                ],
+                                }"
+                                initial-value=""
+                            /> -->
+                        </div> 
                         <div class="q-mb-lg">
                             <p class="text">Предпросмотр</p>
                                 <q-card flat bordered>
@@ -41,23 +72,62 @@
 </template>
 
 <script>
-import { reactive } from 'vue';
+import { ref, reactive, onMounted, onUnmounted } from 'vue';
 import gql from 'graphql-tag';
 import { useMutation } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
 import { DateTime } from "luxon";
-
+import Editor from '@tinymce/tinymce-vue';
+import TinyEditor from "./../components/TinyEditor.vue";
 
 export default {
+  components:{
+    Editor,
+    TinyEditor
+  },
   setup () {
     let now = DateTime.now().toString();
     let createDate = DateTime.fromISO(now, { locale: "ru" });
+    const tinymceScriptSrc = '/plugins/tinymce/tinymce.min.js';
+    const plugins = [
+        "paste",
+        "accordion",
+        "advlist",
+        "anchor",
+        "autolink",
+        "autoresize",
+        "charmap",
+        "code",
+        "codesample",
+        "directionality",
+        "emoticons",
+        "fullscreen",
+        "help",
+        "image",
+        "importcss",
+        "insertdatetime",
+        "link",
+        "lists",
+        "media",
+        "nonbreaking",
+        "pagebreak",
+        "preview",
+        "quickbars",
+        "save",
+        "searchreplace",
+        "table",
+        "visualblocks",
+        "visualchars",
+        "wordcount",
+    ];
     const router = useRouter();
     const newsData = reactive({
         name: '',
-        theme: '',
+        theme: '<img src="https://cdn.imgchest.com/files/thumb/6yxkc5npwv7.jpg" alt="" srcset=""><p><a href="images/xxx.jpg">Посмотрите на мою фотографию!</a></p>',
         date: ''
     });
+    const myReference = ref(null);
+    const fileInput = ref(null);
     const { mutate: sendNews, onDone } = useMutation(gql`
         mutation createNewNews(
             $name: String!,
@@ -84,6 +154,45 @@ export default {
             })
     );
 
+    async function fileUpload(blobInfo) {
+        console.log('blobInfo', blobInfo);
+    } 
+
+    function getInput($event) {
+        console.log($event);
+    }
+
+    function onPaste (evt) {
+      console.log('on paste', evt)
+    }
+    function attachFile (input) {
+        var file;
+
+        // Check if a file is actually selected
+        // if (input.files && (file = input.files[0])) {
+        if (input.target.files) {
+            file = input.target.files[0]
+            let reader = new FileReader();
+            reader.onload = function(e){
+                console.log('E', e);
+                myReference.value = e.target.result;
+                newsData.theme = e.target.result;
+            };
+
+            console.log(file.length);
+
+            // Then read the file
+            reader.readAsDataURL(file, "UTF-8");
+        }
+    }
+
+    function handleFilePaste(e) {
+        console.log('PASTE', e);
+    }
+    function handleFileDrop(e) {
+        console.log('DROP', e);
+    }
+
     function pasteCapture(e) {
         console.log(e);
     }
@@ -96,6 +205,25 @@ export default {
             name: "news",
         });
     })
+    onMounted(() => {
+        document.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+        document.addEventListener('drop', (e) => {
+            e.preventDefault();
+            handleFileDrop();
+        });
+    });
+    onUnmounted(() => {
+        document.removeEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+        document.removeEventListener('drop', (e) => {
+            e.preventDefault();
+            handleFileDrop();
+        });
+    });
+
         return {
             sendNews,
             newsData,
@@ -104,6 +232,16 @@ export default {
             createDate,
             pasteCapture,
             dropCapture,
+            tinymceScriptSrc,
+            plugins,
+            fileUpload,
+            getInput,
+            onPaste,
+            handleFileDrop,
+            handleFilePaste,
+            attachFile,
+            myReference,
+            fileInput
         }
     },
 }

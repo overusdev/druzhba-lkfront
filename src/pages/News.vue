@@ -91,7 +91,7 @@ export default {
             required: true,
             label: 'Описание',
             align: 'left',
-            field: row => row.theme.replaceAll('&nbsp;', ' ') || '-',
+            field: row => row.theme ? row.theme.replaceAll('&nbsp;', ' ') || '-' : '',
             format: val => `${val}`,
             sortable: true
         },
