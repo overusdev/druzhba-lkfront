@@ -4,56 +4,85 @@
             v-if="title"
             class="tiny-editor__title">{{ title }}
         </p>
-        <iframe
-            ref="iframeEl"
-            contenteditable="true"
-            allowtransparency="true"
-            id="iframeEl"
-            class="tiny-editor__iframeEl"
-        >
-        </iframe>
-        <!-- <div
-            ref="iframeEl"
-            contenteditable="true"
-            allowtransparency="true"
-            id="iframeEl"
-            class="tiny-editor__iframeEl"
-        >
-        </div> -->
+        <p>{{ state.text }}</p>
+        <div class="tiny-editor__wrapper">
+            <div class="tiny-editor__header">
+                <div
+                    class="tiny-editor__header-item"
+                    @click="setBold"
+                >
+                    Bold
+                </div>
+                <div
+                    class="tiny-editor__header-item"
+                >
+                    Italic
+                </div>
+            </div>
+            <iframe
+                ref="iframeEl"
+                contenteditable="true"
+                allowtransparency="true"
+                id="iframeEl"
+                class="tiny-editor__iframeEl"
+            >
+            </iframe>
+        </div>
     </main>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { useTextSelection } from '@vueuse/core';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
+
+const state = useTextSelection();
+const content = ref('');
 
 const iframeEl = ref(null);
+const insertText = ref(false);
+let frameDoc  = ref(null);
+let selectedText  = ref(null);
+let setToBold = ref(false);
+
 
 defineProps({
   title: String,
 })
 
+function setBold() {
+    console.log(frameDoc.value.body.innerHTML);
+    setToBold.value = !setToBold.value;
+
+    if(setToBold.value) {
+        frameDoc.value.body.innerHTML = frameDoc.value.body.innerHTML.replace(selectedText.value, `<b>${selectedText.value}</b>`);
+        selectedText.value = null;
+    } else {
+        // frameDoc.value.body.innerHTML = frameDoc.value.body.innerHTML.replace(selectedText.value, `<span>${selectedText.value}</span>`)
+    }
+}
+
 onMounted(() => {
     const outputBody = iframeEl.value.contentDocument.body;
-    let frameDoc = iframeEl.value.document;
+    // let frameDoc = iframeEl.value.document;
+    frameDoc.value = iframeEl.value.document;
     outputBody.contentEditable = true;
 
     if (iframeEl.value.contentWindow) {
-        frameDoc = iframeEl.value.contentWindow.document;
+        // frameDoc = iframeEl.value.contentWindow.document;
+        frameDoc.value = iframeEl.value.contentWindow.document;
     }
 
     outputBody.addEventListener('keydown', (e) => {
-        console.log(e);
-        if (e.keyCode == '13') {
-            var text = div.firstChild.textContent;
-            div.removeChild(div.firstChild);
-            var p = document.createElement('p');
-            p.textContent = text;
-            div.insertBefore(p, div.firstChild);
-        }
-        // frameDoc.execCommand('defaultParagraphSeparator', false, 'p');
-        frameDoc.execCommand('formatblock', false, 'p');
-        
+        // frameDoc.execCommand('formatblock', false, 'p');
+        frameDoc.value.execCommand('formatblock', false, 'p');
     });
+
+    // frameDoc.addEventListener("selectionchange", event => {
+    frameDoc.value.addEventListener("selectionchange", event => {
+        // let selection = frameDoc.getSelection ? frameDoc.getSelection().toString() :  frameDoc.selection.createRange().toString() ;
+        selectedText.value = frameDoc.value.getSelection ? frameDoc.value.getSelection().toString() :  frameDoc.value.selection.createRange().toString() ;
+        // console.log(selection);
+    })
 });
 onUnmounted(() => {
     document.removeEventListener('keydown', (e) => {
@@ -68,6 +97,18 @@ onUnmounted(() => {
     [contenteditable] {
         white-space: pre-wrap;
         display: inline-block;
+    }
+    &__header {
+        display: flex;
+    }
+    &__header-item {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border: 1px solid;
+        cursor: pointer;
     }
     &__iframeEl {
         width: 100%;

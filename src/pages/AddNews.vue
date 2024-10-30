@@ -19,7 +19,6 @@
                         <q-input v-model="newsData.name" label="Заголовок" class="q-mb-lg"/>
                         
                         <div class="q-mb-lg">
-                            <p class="text">Описание</p>
                             <TinyEditor
                                 title="Описание"
                             />
@@ -38,7 +37,7 @@
                                 @drop="handleFileDrop($event)"
                             >
                             </textarea> -->
-                            <!-- <Editor
+                            <Editor
                                 api-key="no-api-key"
                                 :tinymce-script-src="tinymceScriptSrc"
                                 v-model="newsData.theme"
@@ -56,7 +55,7 @@
                                 ],
                                 }"
                                 initial-value=""
-                            /> -->
+                            />
                         </div> 
                         <div class="q-mb-lg">
                             <p class="text">Предпросмотр</p>
