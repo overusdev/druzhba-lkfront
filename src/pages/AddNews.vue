@@ -122,7 +122,8 @@ export default {
     const router = useRouter();
     const newsData = reactive({
         name: '',
-        theme: '<img src="https://cdn.imgchest.com/files/thumb/6yxkc5npwv7.jpg" alt="" srcset=""><p><a href="images/xxx.jpg">Посмотрите на мою фотографию!</a></p>',
+        // theme: '<img src="https://cdn.imgchest.com/files/thumb/6yxkc5npwv7.jpg" alt="" srcset=""><p><a href="images/xxx.jpg">Посмотрите на мою фотографию!</a></p>',
+        theme: '',
         date: ''
     });
     const myReference = ref(null);

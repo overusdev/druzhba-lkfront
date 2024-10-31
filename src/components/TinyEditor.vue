@@ -6,15 +6,23 @@
         </p>
         <p>{{ state.text }}</p>
         <div class="tiny-editor__wrapper">
+            <!-- {{ selection }} -->
             <div class="tiny-editor__header">
                 <div
                     class="tiny-editor__header-item"
+                    :class="{
+                        'tiny-editor__header-item--state--active': setToBold
+                    }"
                     @click="setBold"
                 >
                     Bold
                 </div>
                 <div
                     class="tiny-editor__header-item"
+                    :class="{
+                        'tiny-editor__header-item--state--active': setToItalic
+                    }"
+                    @click="setItalic"
                 >
                     Italic
                 </div>
@@ -36,13 +44,13 @@ import { useTextSelection } from '@vueuse/core';
 import { ref, onMounted, onUnmounted, watch } from 'vue';
 
 const state = useTextSelection();
-const content = ref('');
 
 const iframeEl = ref(null);
-const insertText = ref(false);
 let frameDoc  = ref(null);
+let selection  = ref(null);
 let selectedText  = ref(null);
-let setToBold = ref(false);
+const setToBold = ref(false);
+const setToItalic = ref(false);
 
 
 defineProps({
@@ -50,38 +58,30 @@ defineProps({
 })
 
 function setBold() {
-    console.log(frameDoc.value.body.innerHTML);
     setToBold.value = !setToBold.value;
-
-    if(setToBold.value) {
-        frameDoc.value.body.innerHTML = frameDoc.value.body.innerHTML.replace(selectedText.value, `<b>${selectedText.value}</b>`);
-        selectedText.value = null;
-    } else {
-        // frameDoc.value.body.innerHTML = frameDoc.value.body.innerHTML.replace(selectedText.value, `<span>${selectedText.value}</span>`)
-    }
+    frameDoc.value.execCommand('bold', false, '');
+}
+function setItalic() {
+    setToItalic.value = !setToItalic.value;
+    frameDoc.value.execCommand('italic', false, '');
 }
 
 onMounted(() => {
     const outputBody = iframeEl.value.contentDocument.body;
-    // let frameDoc = iframeEl.value.document;
     frameDoc.value = iframeEl.value.document;
     outputBody.contentEditable = true;
 
     if (iframeEl.value.contentWindow) {
-        // frameDoc = iframeEl.value.contentWindow.document;
         frameDoc.value = iframeEl.value.contentWindow.document;
     }
 
     outputBody.addEventListener('keydown', (e) => {
-        // frameDoc.execCommand('formatblock', false, 'p');
         frameDoc.value.execCommand('formatblock', false, 'p');
     });
 
-    // frameDoc.addEventListener("selectionchange", event => {
     frameDoc.value.addEventListener("selectionchange", event => {
-        // let selection = frameDoc.getSelection ? frameDoc.getSelection().toString() :  frameDoc.selection.createRange().toString() ;
+        selection.value = frameDoc.value.getSelection();
         selectedText.value = frameDoc.value.getSelection ? frameDoc.value.getSelection().toString() :  frameDoc.value.selection.createRange().toString() ;
-        // console.log(selection);
     })
 });
 onUnmounted(() => {
@@ -107,8 +107,20 @@ onUnmounted(() => {
         justify-content: center;
         width: 40px;
         height: 40px;
-        border: 1px solid;
+        border-top: 1px solid #000;
+        border-right: 1px solid #000;
         cursor: pointer;
+
+        &:first-child {
+            border-left: 1px solid #000;
+        }
+
+        &--state {
+            &--active {
+                background: #000;
+                color: #fff;
+            }
+        }
     }
     &__iframeEl {
         width: 100%;
