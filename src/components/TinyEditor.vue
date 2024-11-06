@@ -4,15 +4,14 @@
             v-if="title"
             class="tiny-editor__title">{{ title }}
         </p>
-        <p>{{ state.text }}</p>
         <div class="tiny-editor__wrapper">
-            <!-- {{ selection }} -->
             <div class="tiny-editor__header">
-                <div
+                <!-- <div
                     class="tiny-editor__header-item"
                     :class="{
                         'tiny-editor__header-item--state--active': setToBold
                     }"
+                    onmousedown="event.preventDefault();"
                     @click="setBold"
                 >
                     Bold
@@ -22,19 +21,41 @@
                     :class="{
                         'tiny-editor__header-item--state--active': setToItalic
                     }"
+                    onmousedown="event.preventDefault();"
+                    @click="setItalic"
+                >
+                    Italic
+                </div> -->
+                <div
+                    class="tiny-editor__header-item"
+                    onmousedown="event.preventDefault();"
+                    @click="setBold"
+                >
+                    Bold
+                </div>
+                <div
+                    class="tiny-editor__header-item"
+                    onmousedown="event.preventDefault();"
                     @click="setItalic"
                 >
                     Italic
                 </div>
             </div>
-            <iframe
+            <div
+                ref="iframeEl"
+                contenteditable="true"
+                id="iframeEl"
+                class="tiny-editor__iframeEl"
+            >
+            </div> 
+            <!-- <iframe
                 ref="iframeEl"
                 contenteditable="true"
                 allowtransparency="true"
                 id="iframeEl"
                 class="tiny-editor__iframeEl"
             >
-            </iframe>
+            </iframe> -->
         </div>
     </main>
 </template>
@@ -59,31 +80,49 @@ defineProps({
 
 function setBold() {
     setToBold.value = !setToBold.value;
-    frameDoc.value.execCommand('bold', false, '');
+    document.execCommand('bold', false, '');
 }
 function setItalic() {
     setToItalic.value = !setToItalic.value;
-    frameDoc.value.execCommand('italic', false, '');
+    document.execCommand('italic', false, '');
 }
 
 onMounted(() => {
-    const outputBody = iframeEl.value.contentDocument.body;
-    frameDoc.value = iframeEl.value.document;
-    outputBody.contentEditable = true;
+    // const outputBody = iframeEl.value.contentDocument.body;
+    // frameDoc.value = iframeEl.value.document;
+    // outputBody.contentEditable = true;
 
-    if (iframeEl.value.contentWindow) {
-        frameDoc.value = iframeEl.value.contentWindow.document;
-    }
+    // if (iframeEl.value.contentWindow) {
+    //     frameDoc.value = iframeEl.value.contentWindow.document;
+    // }
 
-    outputBody.addEventListener('keydown', (e) => {
-        frameDoc.value.execCommand('formatblock', false, 'p');
+    // outputBody.addEventListener('keydown', (e) => {
+    //     frameDoc.value.execCommand('formatblock', false, 'p');
+    // });
+
+    iframeEl.value.addEventListener('onmousedown', (event) => {
+        event.preventDefault();
     });
 
-    frameDoc.value.addEventListener("selectionchange", event => {
-        selection.value = frameDoc.value.getSelection();
-        selectedText.value = frameDoc.value.getSelection ? frameDoc.value.getSelection().toString() :  frameDoc.value.selection.createRange().toString() ;
-    })
+    iframeEl.value.addEventListener("click", function(e){
+        const nodeName = e.target.nodeName;
+        const parentEl = e.target.parentElement.nodeName;
+
+        if(nodeName === 'DIV') {
+            setToBold.value = false;
+            setToItalic.value = false;
+        }
+        if(nodeName === 'B') {
+            setToBold.value = true;
+        }
+    }, true);
+
+    // frameDoc.value.addEventListener("selectionchange", event => {
+    //     selection.value = frameDoc.value.getSelection();
+    //     selectedText.value = frameDoc.value.getSelection ? frameDoc.value.getSelection().toString() :  frameDoc.value.selection.createRange().toString() ;
+    // });
 });
+
 onUnmounted(() => {
     document.removeEventListener('keydown', (e) => {
         e.preventDefault();
