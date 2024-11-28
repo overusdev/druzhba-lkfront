@@ -80,47 +80,26 @@ defineProps({
 
 function setBold() {
     setToBold.value = !setToBold.value;
-    document.execCommand('bold', false, '');
 }
 function setItalic() {
     setToItalic.value = !setToItalic.value;
-    document.execCommand('italic', false, '');
 }
 
 onMounted(() => {
-    // const outputBody = iframeEl.value.contentDocument.body;
-    // frameDoc.value = iframeEl.value.document;
-    // outputBody.contentEditable = true;
-
-    // if (iframeEl.value.contentWindow) {
-    //     frameDoc.value = iframeEl.value.contentWindow.document;
-    // }
-
-    // outputBody.addEventListener('keydown', (e) => {
-    //     frameDoc.value.execCommand('formatblock', false, 'p');
-    // });
-
     iframeEl.value.addEventListener('onmousedown', (event) => {
         event.preventDefault();
     });
 
     iframeEl.value.addEventListener("click", function(e){
-        const nodeName = e.target.nodeName;
-        const parentEl = e.target.parentElement.nodeName;
+        const selection = window.getSelection();
+        const range = selection.getRangeAt(0);
+        const span = document.createElement("p");
+        range.setStart(span, 0);
+        range.collapse(true);
 
-        if(nodeName === 'DIV') {
-            setToBold.value = false;
-            setToItalic.value = false;
-        }
-        if(nodeName === 'B') {
-            setToBold.value = true;
-        }
+        selection.removeAllRanges();
+        selection.addRange(range);
     }, true);
-
-    // frameDoc.value.addEventListener("selectionchange", event => {
-    //     selection.value = frameDoc.value.getSelection();
-    //     selectedText.value = frameDoc.value.getSelection ? frameDoc.value.getSelection().toString() :  frameDoc.value.selection.createRange().toString() ;
-    // });
 });
 
 onUnmounted(() => {

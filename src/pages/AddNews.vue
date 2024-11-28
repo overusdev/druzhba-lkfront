@@ -19,24 +19,6 @@
                         <q-input v-model="newsData.name" label="Заголовок" class="q-mb-lg"/>
                         
                         <div class="q-mb-lg">
-                            <TinyEditor
-                                title="Описание"
-                            />
-
-                            <!-- <input
-                                ref="fileInput"
-                                @change="attachFile($event)"
-                                type="file" id="js-file" accept=".jpeg,.png,jpg,.txt,.css,.html">
-                            <br>
-                            <textarea
-                                class="row"
-                                ref="myReference"
-                                v-model="newsData.theme"
-                                name="text"
-                                id="text"
-                                @drop="handleFileDrop($event)"
-                            >
-                            </textarea> -->
                             <Editor
                                 api-key="no-api-key"
                                 :tinymce-script-src="tinymceScriptSrc"
@@ -122,12 +104,9 @@ export default {
     const router = useRouter();
     const newsData = reactive({
         name: '',
-        // theme: '<img src="https://cdn.imgchest.com/files/thumb/6yxkc5npwv7.jpg" alt="" srcset=""><p><a href="images/xxx.jpg">Посмотрите на мою фотографию!</a></p>',
         theme: '',
         date: ''
     });
-    const myReference = ref(null);
-    const fileInput = ref(null);
     const { mutate: sendNews, onDone } = useMutation(gql`
         mutation createNewNews(
             $name: String!,
@@ -156,48 +135,6 @@ export default {
 
     async function fileUpload(blobInfo) {
         console.log('blobInfo', blobInfo);
-    } 
-
-    function getInput($event) {
-        console.log($event);
-    }
-
-    function onPaste (evt) {
-      console.log('on paste', evt)
-    }
-    function attachFile (input) {
-        var file;
-
-        // Check if a file is actually selected
-        // if (input.files && (file = input.files[0])) {
-        if (input.target.files) {
-            file = input.target.files[0]
-            let reader = new FileReader();
-            reader.onload = function(e){
-                console.log('E', e);
-                myReference.value = e.target.result;
-                newsData.theme = e.target.result;
-            };
-
-            console.log(file.length);
-
-            // Then read the file
-            reader.readAsDataURL(file, "UTF-8");
-        }
-    }
-
-    function handleFilePaste(e) {
-        console.log('PASTE', e);
-    }
-    function handleFileDrop(e) {
-        console.log('DROP', e);
-    }
-
-    function pasteCapture(e) {
-        console.log(e);
-    }
-    function dropCapture(e) {
-        console.log(e);
     }
 
     onDone(() => {
@@ -205,24 +142,6 @@ export default {
             name: "news",
         });
     })
-    onMounted(() => {
-        document.addEventListener('dragover', (e) => {
-            e.preventDefault();
-        });
-        document.addEventListener('drop', (e) => {
-            e.preventDefault();
-            handleFileDrop();
-        });
-    });
-    onUnmounted(() => {
-        document.removeEventListener('dragover', (e) => {
-            e.preventDefault();
-        });
-        document.removeEventListener('drop', (e) => {
-            e.preventDefault();
-            handleFileDrop();
-        });
-    });
 
         return {
             sendNews,
@@ -230,18 +149,9 @@ export default {
             onDone,
             router,
             createDate,
-            pasteCapture,
-            dropCapture,
             tinymceScriptSrc,
             plugins,
             fileUpload,
-            getInput,
-            onPaste,
-            handleFileDrop,
-            handleFilePaste,
-            attachFile,
-            myReference,
-            fileInput
         }
     },
 }
