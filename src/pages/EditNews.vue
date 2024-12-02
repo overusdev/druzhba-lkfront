@@ -20,16 +20,28 @@
             </q-header>
             <q-page-container>
                 <q-page class="q-pa-md">
-                    <div class="q-pa-md q-pt-lg" style="max-width: 800px">
+                    <div class="q-pa-md q-pt-lg" style="max-width: 1000px">
                         <q-input v-model="newsData.name" label="Заголовок" class="q-mb-lg"/>
                         
                         <div class="q-mb-lg">
-                            <p class="text">Описание</p>
-                            <q-editor
+                            <Editor
+                                api-key="no-api-key"
+                                :tinymce-script-src="tinymceScriptSrc"
                                 v-model="newsData.theme"
-                                min-height="5rem"
-                                @paste.native="evt => pasteCapture(evt)"
-                                @drop.native="evt => dropCapture(evt)"
+                                :init="{
+                                toolbar_mode: 'sliding',
+                                plugins: plugins,
+                                language: 'ru',
+                                toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+                                tinycomments_mode: 'embedded',
+                                tinycomments_author: 'Author name',
+                                images_upload_handler: fileUpload,
+                                mergetags_list: [
+                                    { value: 'First.Name', title: 'First Name' },
+                                    { value: 'Email', title: 'Email' },
+                                ],
+                                }"
+                                initial-value=""
                             />
                         </div>
                         <div class="q-mb-lg">
@@ -64,8 +76,12 @@ import gql from 'graphql-tag';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
+import Editor from '@tinymce/tinymce-vue';
 
 export default {
+    components:{
+        Editor,
+    },
     setup () {
         const disableEditButton = ref(true);
         const showRemovePopup = ref(false);
@@ -75,6 +91,38 @@ export default {
             name: '',
             theme: '',
         });
+        const tinymceScriptSrc = '/plugins/tinymce/tinymce.min.js';
+        const plugins = [
+            "paste",
+            "accordion",
+            "advlist",
+            "anchor",
+            "autolink",
+            "autoresize",
+            "charmap",
+            "code",
+            "codesample",
+            "directionality",
+            "emoticons",
+            "fullscreen",
+            "help",
+            "image",
+            "importcss",
+            "insertdatetime",
+            "link",
+            "lists",
+            "media",
+            "nonbreaking",
+            "pagebreak",
+            "preview",
+            "quickbars",
+            "save",
+            "searchreplace",
+            "table",
+            "visualblocks",
+            "visualchars",
+            "wordcount",
+        ];
         const NEWS = gql`
             query findOne($id: Int!) {
                 new(id: $id) {
@@ -125,11 +173,8 @@ export default {
                 })
         );
 
-        function pasteCapture(e) {
-            console.log(e);
-        }
-        function dropCapture(e) {
-            console.log(e);
+        async function fileUpload(blobInfo) {
+            console.log('blobInfo', blobInfo);
         }
 
         onDone(() => {
@@ -167,13 +212,14 @@ export default {
             router,
             route,
             news,
-            pasteCapture,
-            dropCapture,
             upplyRemoveNews,
             disableEditButton,
             showRemovePopup,
             onDoneremoveNews,
             removeNews,
+            tinymceScriptSrc,
+            plugins,
+            fileUpload,
         }
     },
 }

@@ -15,7 +15,7 @@
             </q-header>
             <q-page-container>
                 <q-page class="q-pa-md">
-                    <div class="q-pa-md q-pt-lg" style="max-width: 800px">
+                    <div class="q-pa-md q-pt-lg" style="max-width: 1000px">
                         <q-input v-model="newsData.name" label="Заголовок" class="q-mb-lg"/>
                         
                         <div class="q-mb-lg">

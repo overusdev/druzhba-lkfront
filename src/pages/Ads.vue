@@ -87,15 +87,6 @@ export default {
             sortable: true
         },
         {
-            name: 'theme',
-            required: true,
-            label: 'Описание',
-            align: 'left',
-            field: row => row.theme.replaceAll('&nbsp;', ' ') || '-',
-            format: val => `${val}`,
-            sortable: true
-        },
-        {
             name: 'date',
             required: true,
             label: 'Дата создания',
