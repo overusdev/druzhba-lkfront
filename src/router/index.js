@@ -10,6 +10,8 @@ import AddNewsPage from '../pages/AddNews.vue';
 import AddAdPage from '../pages/AddAd.vue';
 import EditNewsPage from '../pages/EditNews.vue';
 import EditAdPage from '../pages/EditAd.vue';
+import CreateContactsPage from '../pages/CreateContactsPage.vue';
+import EditContactsPage from '../pages/EditContactsPage.vue';
 import { useAuthStore } from '../stores/auth';
 
 const router = createRouter({
@@ -99,6 +101,22 @@ const router = createRouter({
             path: '/edit-ad/:id',
             name: 'edit-ad',
             component: EditAdPage,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/contacts-create',
+            name: 'contacts-create',
+            component: CreateContactsPage,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/contacts-update',
+            name: 'contacts-update',
+            component: EditContactsPage,
             meta: {
                 requiresAuth: true
             }

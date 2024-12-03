@@ -58,6 +58,30 @@
               </q-item>
             </router-link>
 
+            <router-link to="/contacts-create" class="router-link disabled">
+              <q-item clickable v-ripple>
+                <q-item-section avatar>
+                <q-icon name="location_on" color="black"/>
+                </q-item-section>
+
+                <q-item-section>
+                  Контакты
+                </q-item-section>
+              </q-item>
+            </router-link>
+
+            <router-link to="/contacts-update" class="router-link">
+              <q-item clickable v-ripple>
+                <q-item-section avatar>
+                <q-icon name="location_on" color="black"/>
+                </q-item-section>
+
+                <q-item-section>
+                  Контакты редактировать
+                </q-item-section>
+              </q-item>
+            </router-link>
+
             <q-item clickable v-ripple>
               <q-item-section avatar>
                 <q-icon name="logout" color="red"/>
@@ -108,7 +132,6 @@ function logOut() {
 }
 
 onMounted(async () => {
-  // authStore.adminName = authStore.parseJwt(authStore.getCookie('dr_access_token'));
   authStore.adminData.name = authStore.parseJwt(authStore.getCookie('dr_access_token')).username;
   authStore.adminData.isAdmin = authStore.parseJwt(authStore.getCookie('dr_access_token')).isAdmin;
 
