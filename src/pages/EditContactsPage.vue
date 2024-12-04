@@ -141,7 +141,7 @@ export default {
 
     onDone(() => {
         router.push({
-            name: "users",
+            name: "completed-contacts-page",
         });
     })
 

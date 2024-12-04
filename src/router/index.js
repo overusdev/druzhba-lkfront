@@ -12,6 +12,7 @@ import EditNewsPage from '../pages/EditNews.vue';
 import EditAdPage from '../pages/EditAd.vue';
 import CreateContactsPage from '../pages/CreateContactsPage.vue';
 import EditContactsPage from '../pages/EditContactsPage.vue';
+import CompletedContactsPage from '../pages/CompletedContactsPage.vue';
 import { useAuthStore } from '../stores/auth';
 
 const router = createRouter({
@@ -117,6 +118,14 @@ const router = createRouter({
             path: '/contacts-update',
             name: 'contacts-update',
             component: EditContactsPage,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/completed-contacts-page',
+            name: 'completed-contacts-page',
+            component: CompletedContactsPage,
             meta: {
                 requiresAuth: true
             }
