@@ -82,6 +82,18 @@
               </q-item>
             </router-link>
 
+            <router-link to="/docs" class="router-link">
+              <q-item clickable v-ripple>
+                <q-item-section avatar>
+                <q-icon name="file_open" color="blue"/>
+                </q-item-section>
+
+                <q-item-section>
+                  Документы
+                </q-item-section>
+              </q-item>
+            </router-link>
+
             <q-item clickable v-ripple>
               <q-item-section avatar>
                 <q-icon name="logout" color="red"/>

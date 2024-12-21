@@ -5,6 +5,7 @@ import UsersPage from '../pages/Users.vue';
 import AddUserPage from '../pages/AddUser.vue';
 import EditUserPage from '../pages/EditUser.vue';
 import NewsPage from '../pages/News.vue';
+import DocsPage from '../pages/Docs.vue';
 import AdsPage from '../pages/Ads.vue';
 import AddNewsPage from '../pages/AddNews.vue';
 import AddAdPage from '../pages/AddAd.vue';
@@ -62,6 +63,14 @@ const router = createRouter({
             path: '/news',
             name: 'news',
             component: NewsPage,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/docs',
+            name: 'docs',
+            component: DocsPage,
             meta: {
                 requiresAuth: true
             }
