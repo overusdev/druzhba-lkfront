@@ -127,7 +127,7 @@ export default {
                 variables: {
                     name: AdData.name,
                     theme: AdData.theme,
-                    date: createDate.toFormat("dd MMMM yyyy"),
+                    date: createDate.toFormat("dd MMMM yyyy hh:mm"),
                 },
             })
     );

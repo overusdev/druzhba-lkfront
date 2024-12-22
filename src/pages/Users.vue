@@ -122,6 +122,24 @@ export default {
             format: val => `${val}`,
             sortable: true
         },
+        {
+            name: 'date',
+            required: true,
+            label: 'Дата создания',
+            align: 'left',
+            field: row => row.date || '-',
+            format: val => `${val}`,
+            sortable: true
+        },
+        {
+            name: 'date',
+            required: true,
+            label: 'Дата обновления',
+            align: 'left',
+            field: row => row.updated || '-',
+            format: val => `${val}`,
+            sortable: true
+        },
     ];
     const userData = ref({
         name: '',
@@ -144,6 +162,8 @@ export default {
                 patronymic
                 area
                 phone
+                date
+                updated
             }
         }
     `;

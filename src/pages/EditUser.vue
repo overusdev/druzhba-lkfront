@@ -25,7 +25,7 @@
                         <q-input v-model="userData.surname" label="Фамилия" />
                         <q-input v-model="userData.patronymic" label="Отчество" />
                         <q-checkbox v-model="userData.isAdmin" label="Является администратором" />
-                        <q-input v-model="userData.area" label="Участок" />
+                        <q-input type="number" v-model="userData.area" label="Участок" />
                         <q-input
                             v-model="userData.phone"
                             label="Номер телефона"
@@ -70,6 +70,7 @@ import gql from 'graphql-tag';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
+import { DateTime } from "luxon";
 
 export default {
   setup () {
@@ -77,6 +78,8 @@ export default {
     const showRemovePopup = ref(false);
     const router = useRouter();
     const route = useRoute();
+    let now = DateTime.now().toString();
+    let updatedDate = DateTime.fromISO(now, { locale: "ru" });
     const userData = reactive({
         name: '',
         surname: '',
@@ -123,6 +126,7 @@ export default {
             $bcryptpassword: String!,
             $role: String!,
             $note: String!,
+            $updated: String!,
         ){
             updateUser(updateUserInput: {
                 id: $id,
@@ -136,6 +140,7 @@ export default {
                 bcryptpassword: $bcryptpassword,
                 role: $role,
                 note: $note,
+                updated: $updated,
             }) {
                     id
                     name
@@ -155,6 +160,7 @@ export default {
                     bcryptpassword: userData.password,
                     role: userData.role,
                     note: userData.note,
+                    updated: updatedDate.toFormat("dd MMMM yyyy hh:mm"),
                 },
             })
     );

@@ -59,6 +59,7 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
 import Editor from '@tinymce/tinymce-vue';
+import { DateTime } from "luxon";
 
 export default {
   components:{
@@ -67,6 +68,8 @@ export default {
   setup () {
     const router = useRouter();
     const route = useRoute();
+    let now = DateTime.now().toString();
+    let updatedDate = DateTime.fromISO(now, { locale: "ru" });
     const adData = reactive({
         name: '',
         theme: '',
@@ -121,11 +124,13 @@ export default {
             $id: Int!,
             $name: String!,
             $theme: String!,
+            $updated: String!,
         ){
             updateAds(updateAdInput: {
                 id: $id,
                 name: $name,
                 theme: $theme,
+                updated: $updated,
             }) {
                     id
                     name
@@ -137,6 +142,7 @@ export default {
                     id: Number(route.params.id),
                     name: adData.name,
                     theme: adData.theme,
+                    updated: updatedDate.toFormat("dd MMMM yyyy hh:mm"),
                 },
             })
     );
