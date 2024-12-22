@@ -1,33 +1,33 @@
 <template>
-    <div class="news q-pa-md">
+    <div class="edit-doc q-pa-md">
         <q-layout view="lHh lpr lFf" container style="min-height: 800px" class="shadow-2 rounded-borders">
             <q-header bordered class="bg-white text-black">
                 <q-toolbar>
-                    <router-link to="/news">
+                    <router-link to="/docs">
                         <q-btn flat round dense text-color="black" icon="arrow_back" />
                     </router-link>
-                    <q-toolbar-title>Редактироване новсти {{ newsData.id }}</q-toolbar-title>
+                    <q-toolbar-title>Редактироване документа {{ docsData.id }}</q-toolbar-title>
                     <q-btn
                         color="secondary"
                         label="Сохранить данные"
-                        @click="editNews"/>
+                        @click="editDoc"/>
                     <q-btn
                         class="q-ml-sm"
                         color="red"
                         icon="delete"
-                        @click="upplyRemoveNews"/>
+                        @click="upplyRemoveDoc"/>
                 </q-toolbar>
             </q-header>
             <q-page-container>
                 <q-page class="q-pa-md">
                     <div class="q-pa-md q-pt-lg" style="max-width: 1000px">
-                        <q-input v-model="newsData.name" label="Заголовок" class="q-mb-lg"/>
+                        <q-input v-model="docsData.title" label="Заголовок" class="q-mb-lg"/>
                         
                         <div class="q-mb-lg">
                             <Editor
                                 api-key="no-api-key"
                                 :tinymce-script-src="tinymceScriptSrc"
-                                v-model="newsData.theme"
+                                v-model="docsData.theme"
                                 :init="{
                                 toolbar_mode: 'sliding',
                                 plugins: plugins,
@@ -47,7 +47,7 @@
                         <div class="q-mb-lg">
                             <p class="text">Предпросмотр</p>
                                 <q-card flat bordered>
-                                <q-card-section v-html="newsData.theme" />
+                                <q-card-section v-html="docsData.theme" />
                             </q-card>
                         </div>
                     </div>
@@ -55,15 +55,15 @@
             </q-page-container>
         </q-layout>
         <q-dialog v-model="showRemovePopup">
-            <q-card class="news__dialog">
+            <q-card class="edit-doc__dialog">
                 <q-card-section class="q-pt-xl">
-                    <p class="text text-red">Действительно удалить все данные по новости?</p>
-                    <q-btn flat no-caps icon="close" class="news__close-icon" v-close-popup />
+                    <p class="text text-red">Действительно удалить все данные по документу? </p>
+                    <q-btn flat no-caps icon="close" class="edit-doc__close-icon" v-close-popup />
                     <q-btn
                         color="red"
                         icon="delete"
                         label="Да, удалить"
-                        @click="removeNews"/>
+                        @click="removeDoc"/>
                 </q-card-section>
             </q-card>
         </q-dialog>
@@ -90,8 +90,8 @@ export default {
         const route = useRoute();
         let now = DateTime.now().toString();
         let updatedDate = DateTime.fromISO(now, { locale: "ru" });
-        const newsData = reactive({
-            name: '',
+        const docsData = reactive({
+            title: '',
             theme: '',
             updated: ''
         });
@@ -127,49 +127,49 @@ export default {
             "visualchars",
             "wordcount",
         ];
-        const NEWS = gql`
+        const DOCS = gql`
             query findOne($id: Int!) {
-                new(id: $id) {
+                doc(id: $id) {
                     id
-                    name
+                    title
                     theme
                 }
             }
         `;
-        const { result, loading, error, refetch } = useQuery(NEWS, () => ({
+        const { result, loading, error, refetch } = useQuery(DOCS, () => ({
             id: Number(route.params.id),
         }));
-        const news = computed(() => result ?? []);
-        const { mutate: editNews, onDone } = useMutation(gql`
-            mutation updateNews(
+        const docs = computed(() => result ?? []);
+        const { mutate: editDoc, onDone } = useMutation(gql`
+            mutation updateDoc(
                 $id: Int!,
-                $name: String!,
+                $title: String!,
                 $theme: String!,
                 $updated: String!,
             ){
-                updateNews(updateNewsInput: {
+                updateDoc(updateDocInput: {
                     id: $id,
-                    name: $name,
+                    title: $title,
                     theme: $theme,
                     updated: $updated,
                 }) {
                         id
-                        name
+                        title
                         theme
                     }
                 }
             `, () => ({
                     variables: {
                         id: Number(route.params.id),
-                        name: newsData.name,
-                        theme: newsData.theme,
+                        title: docsData.title,
+                        theme: docsData.theme,
                         updated: updatedDate.toFormat("dd MMMM yyyy hh:mm"),
                     },
                 })
         );
-        const { mutate: removeNews, onDone: onDoneremoveNews } = useMutation(gql`
+        const { mutate: removeDoc, onDone: onDoneremoveDoc } = useMutation(gql`
             mutation removeAll($id: Int!){
-                removeNews(id: $id) {
+                removeDoc(id: $id) {
                     id
                 }
             }
@@ -186,54 +186,55 @@ export default {
 
         onDone(() => {
             router.push({
-                name: "news",
+                name: "docs",
             });
         })
 
-        onDoneremoveNews(() => {
+        onDoneremoveDoc(() => {
             router.push({
-                name: "news",
+                name: "docs",
             });
         })
 
         onMounted(async () => {
             const refetchQuery = await refetch();
-            if(refetchQuery.data.new) {
-                newsData.id = refetchQuery.data.new.id;
-                newsData.name = refetchQuery.data.new.name;
-                newsData.theme = refetchQuery.data.new.theme;
+            if(refetchQuery.data.doc) {
+                docsData.id = refetchQuery.data.doc.id;
+                docsData.title = refetchQuery.data.doc.title;
+                docsData.theme = refetchQuery.data.doc.theme;
             }
         });
 
-        function upplyRemoveNews() {
+        function upplyRemoveDoc() {
             showRemovePopup.value = true;
         }
 
         return {
-            editNews,
-            newsData,
+            editDoc,
+            docsData,
             onDone,
             result,
             loading,
             refetch,
             router,
             route,
-            news,
-            upplyRemoveNews,
+            docs,
+            upplyRemoveDoc,
             disableEditButton,
             showRemovePopup,
-            onDoneremoveNews,
-            removeNews,
+            onDoneremoveDoc,
+            removeDoc,
             tinymceScriptSrc,
             plugins,
             fileUpload,
+            updatedDate,
         }
     },
 }
 </script>
 
 <style scoped lang="scss">
-.news {
+.edit-doc {
     &__dialog {
         position: relative;
     }

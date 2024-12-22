@@ -120,7 +120,7 @@ export default {
         `, () => ({
                 variables: {
                     theme: contactsData.theme,
-                    date: createDate.toFormat("dd MMMM yyyy"),
+                    date: createDate.toFormat("dd MMMM yyyy hh:mm"),
                 },
             })
     );

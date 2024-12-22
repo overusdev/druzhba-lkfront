@@ -9,8 +9,10 @@ import DocsPage from '../pages/Docs.vue';
 import AdsPage from '../pages/Ads.vue';
 import AddNewsPage from '../pages/AddNews.vue';
 import AddAdPage from '../pages/AddAd.vue';
+import AddDocPage from '../pages/AddDoc.vue';
 import EditNewsPage from '../pages/EditNews.vue';
 import EditAdPage from '../pages/EditAd.vue';
+import EditDocPage from '../pages/EditDoc.vue';
 import CreateContactsPage from '../pages/CreateContactsPage.vue';
 import EditContactsPage from '../pages/EditContactsPage.vue';
 import CompletedContactsPage from '../pages/CompletedContactsPage.vue';
@@ -100,6 +102,14 @@ const router = createRouter({
             }
         },
         {
+            path: '/add-doc',
+            name: 'add-doc',
+            component: AddDocPage,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
             path: '/edit-news/:id',
             name: 'edit-news',
             component: EditNewsPage,
@@ -111,6 +121,14 @@ const router = createRouter({
             path: '/edit-ad/:id',
             name: 'edit-ad',
             component: EditAdPage,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/edit-doc/:id',
+            name: 'edit-doc',
+            component: EditDocPage,
             meta: {
                 requiresAuth: true
             }

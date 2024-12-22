@@ -128,7 +128,7 @@ export default {
                 variables: {
                     name: newsData.name,
                     theme: newsData.theme,
-                    date: createDate.toFormat("dd MMMM yyyy"),
+                    date: createDate.toFormat("dd MMMM yyyy hh:mm"),
                 },
             })
     );

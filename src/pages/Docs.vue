@@ -34,7 +34,7 @@
                     <q-table
                         :rows="docs"
                         :columns="columns"
-                        row-key="name"
+                        row-key="title"
                         selection="single"
                         v-model:selected="docsGroup"
                         :separator="separator"
@@ -82,7 +82,7 @@ export default {
             required: true,
             label: 'Название',
             align: 'left',
-            field: row => row.name || '-',
+            field: row => row.title || '-',
             format: val => `${val}`,
             sortable: true
         },
@@ -92,6 +92,15 @@ export default {
             label: 'Дата создания',
             align: 'left',
             field: row => row.date || '-',
+            format: val => `${val}`,
+            sortable: true
+        },
+        {
+            name: 'date',
+            required: true,
+            label: 'Дата обновления',
+            align: 'left',
+            field: row => row.updated || '-',
             format: val => `${val}`,
             sortable: true
         },
@@ -111,6 +120,7 @@ export default {
                 title
                 theme
                 date
+                updated
             }
         }
     `;
@@ -119,18 +129,19 @@ export default {
         title: docsData.value.title,
         theme: docsData.value.theme,
         date: docsData.value.date,
+        updated: docsData.value.updated,
     }));
     const docs = computed(() => result.value?.docs ?? []);
     const options = computed(() => docs.value);
     const { mutate: removeDocs, onDone: onDoneRemoveDocs } = useMutation(gql`
-        mutation removeDoc($id: Int!){
-            removeDoc(id: $id) {
+        mutation removeAll($ids: [Int!]!){
+            removeDocsByIds(ids: $ids) {
                 id
             }
         }
         `, () => ({
                 variables: {
-                    id: docId.value
+                    ids: docsGroup.value.map(i => i.id)
                 },
             })
     );

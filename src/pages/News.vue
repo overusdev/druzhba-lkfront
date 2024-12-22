@@ -95,6 +95,15 @@ export default {
             format: val => `${val}`,
             sortable: true
         },
+        {
+            name: 'date',
+            required: true,
+            label: 'Дата обновления',
+            align: 'left',
+            field: row => row.updated || '-',
+            format: val => `${val}`,
+            sortable: true
+        },
     ];
     const newsData = ref({
         name: '',
@@ -110,6 +119,7 @@ export default {
                 name
                 theme
                 date
+                updated
             }
         }
     `;
