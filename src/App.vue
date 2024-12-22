@@ -17,7 +17,7 @@
       <q-drawer
         v-model="drawer"
         show-if-above
-        :width="drawerHeight"
+        :width="drawerWidth"
         :breakpoint="400"
       >
         <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
@@ -133,7 +133,7 @@ const drawer = ref(false);
 const loading = ref(false);
 const store = useGeometryStore();
 const authStore = useAuthStore();
-const drawerHeight = computed(() => store.isMobile ? 200 : 300);
+const drawerWidth = computed(() => store.isMobile ? 300 : 400);
 
 function logOut() {
   loading.value = true;
