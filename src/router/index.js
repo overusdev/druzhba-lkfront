@@ -5,11 +5,17 @@ import UsersPage from '../pages/Users.vue';
 import AddUserPage from '../pages/AddUser.vue';
 import EditUserPage from '../pages/EditUser.vue';
 import NewsPage from '../pages/News.vue';
+import DocsPage from '../pages/Docs.vue';
 import AdsPage from '../pages/Ads.vue';
 import AddNewsPage from '../pages/AddNews.vue';
 import AddAdPage from '../pages/AddAd.vue';
+import AddDocPage from '../pages/AddDoc.vue';
 import EditNewsPage from '../pages/EditNews.vue';
 import EditAdPage from '../pages/EditAd.vue';
+import EditDocPage from '../pages/EditDoc.vue';
+import CreateContactsPage from '../pages/CreateContactsPage.vue';
+import EditContactsPage from '../pages/EditContactsPage.vue';
+import CompletedContactsPage from '../pages/CompletedContactsPage.vue';
 import { useAuthStore } from '../stores/auth';
 
 const router = createRouter({
@@ -64,6 +70,14 @@ const router = createRouter({
             }
         },
         {
+            path: '/docs',
+            name: 'docs',
+            component: DocsPage,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
             path: '/ads',
             name: 'ads',
             component: AdsPage,
@@ -88,6 +102,14 @@ const router = createRouter({
             }
         },
         {
+            path: '/add-doc',
+            name: 'add-doc',
+            component: AddDocPage,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
             path: '/edit-news/:id',
             name: 'edit-news',
             component: EditNewsPage,
@@ -99,6 +121,38 @@ const router = createRouter({
             path: '/edit-ad/:id',
             name: 'edit-ad',
             component: EditAdPage,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/edit-doc/:id',
+            name: 'edit-doc',
+            component: EditDocPage,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/contacts-create',
+            name: 'contacts-create',
+            component: CreateContactsPage,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/contacts-update',
+            name: 'contacts-update',
+            component: EditContactsPage,
+            meta: {
+                requiresAuth: true
+            }
+        },
+        {
+            path: '/completed-contacts-page',
+            name: 'completed-contacts-page',
+            component: CompletedContactsPage,
             meta: {
                 requiresAuth: true
             }

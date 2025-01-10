@@ -1,5 +1,5 @@
 <template>
-    <div class="users q-pa-md">
+    <div class="news q-pa-md">
         <q-layout 
             view="lHh lpr lFf"
             container
@@ -7,11 +7,11 @@
             class="shadow-2 rounded-borders">
             <q-header bordered class="bg-white text-black">
                 <q-toolbar>
-                    <q-toolbar-title>Список участков <span class="text-weight-bold">всего: {{ users.length }}</span></q-toolbar-title>
-                    <router-link to="/add-user">
-                        <q-btn color="white" text-color="black" icon="add" label="Добавить нового" />
+                    <q-toolbar-title>Список документов <span class="text-weight-bold">всего: {{ docs.length }}</span></q-toolbar-title>
+                    <router-link to="/add-doc">
+                        <q-btn color="white" text-color="black" icon="add" label="Добавить документ" />
                     </router-link>
-                    <router-link :to="`/edit-user/${ usersGroup.length ? usersGroup[0].id : null}`">
+                    <router-link :to="`/edit-doc/${ docsGroup.length ? docsGroup[0].id : null}`">
                         <q-btn
                             class="q-ml-sm"
                             color="white"
@@ -24,42 +24,42 @@
                         class="q-ml-sm"
                         color="red"
                         icon="delete"
-                        label="Удалить выбранного"
+                        label="Удалить выбранную"
                         :disable="disableRemoveButton"
-                        @click="upplyRemoveUsers"/>
+                        @click="upplyRemoveDocs"/>
                 </q-toolbar>
             </q-header>
             <q-page-container>
                 <q-page class="q-pa-md">
                     <q-table
-                        :rows="users"
+                        :rows="docs"
                         :columns="columns"
-                        row-key="name"
+                        row-key="title"
                         selection="single"
-                        v-model:selected="usersGroup"
+                        v-model:selected="docsGroup"
                         :separator="separator"
                         :loading="loading"
-                        no-data-label="Участков не найдено"
+                        no-data-label="документов не найдено"
                         hide-pagination
                         hide-selected-banner
                     >
-                        <template v-if="usersGroup.length" v-slot:bottom>
-                            Выбран участок {{ usersGroup[0].area }}
+                        <template v-if="docsGroup.length" v-slot:bottom>
+                            Выбран документ {{ docsGroup[0].id }}
                         </template>
                     </q-table>
                 </q-page>
             </q-page-container>
         </q-layout>
         <q-dialog v-model="showRemovePopup">
-            <q-card class="users__dialog">
+            <q-card class="news__dialog">
                 <q-card-section class="q-pt-xl">
-                    <p class="text text-red">Действительно удалить все данные по участку?</p>
-                    <q-btn flat no-caps icon="close" class="users__close-icon" v-close-popup />
+                    <p class="text text-red">Действительно удалить документ?</p>
+                    <q-btn flat no-caps icon="close" class="news__close-icon" v-close-popup />
                     <q-btn
                         color="red"
                         icon="delete"
                         label="Да, удалить"
-                        @click="removeUsers"/>
+                        @click="removeDocs"/>
                 </q-card-section>
             </q-card>
         </q-dialog>
@@ -78,47 +78,11 @@ export default {
     const showRemovePopup = ref(false);
     const columns = [
         {
-            name: 'area',
+            name: 'title',
             required: true,
-            label: 'Участок',
+            label: 'Название',
             align: 'left',
-            field: row => row.area,
-            format: val => `${val}`,
-            sortable: true
-        },
-        {
-            name: 'surname',
-            required: true,
-            label: 'Фамилия',
-            align: 'left',
-            field: row => row.surname,
-            format: val => `${val}`,
-            sortable: true
-        },
-        {
-            name: 'name',
-            required: true,
-            label: 'Имя',
-            align: 'left',
-            field: row => row.name,
-            format: val => `${val}`,
-            sortable: true
-        },
-        {
-            name: 'patronymic',
-            required: true,
-            label: 'Отчество',
-            align: 'left',
-            field: row => row.patronymic || '-',
-            format: val => `${val}`,
-            sortable: true
-        },
-        {
-            name: 'phone',
-            required: true,
-            label: 'Номер телефона',
-            align: 'left',
-            field: row => row.phone,
+            field: row => row.title || '-',
             format: val => `${val}`,
             sortable: true
         },
@@ -141,60 +105,55 @@ export default {
             sortable: true
         },
     ];
-    const userData = ref({
-        name: '',
-        surname: '',
-        patronymic: '',
-        isAdmin: false,
-        area: '',
-        phone: '',
-        password: '',
-        role: '',
+    const docsData = ref({
+        title: '',
+        theme: '',
+        date: '',
     });
-    const usersGroup = ref([]);
-    const usersIds = ref([]);
-    const USERS = gql`
+    const docsGroup = ref([]);
+    const docsIds = ref([]);
+    const docId = ref("");
+    const DOCS = gql`
         query findAll($take: Int!) {
-            users(take: $take) {
+            docs(take: $take) {
                 id
-                name
-                surname
-                patronymic
-                area
-                phone
+                title
+                theme
                 date
                 updated
             }
         }
     `;
-    const { result, loading, error, refetch } = useQuery(USERS, () => ({
+    const { result, loading, error, refetch } = useQuery(DOCS, () => ({
         take: 500,
-        name: userData.value.name,
-        surname: userData.value.surname,
+        title: docsData.value.title,
+        theme: docsData.value.theme,
+        date: docsData.value.date,
+        updated: docsData.value.updated,
     }));
-    const users = computed(() => result.value?.users ?? []);
-    const options = computed(() => users.value);
-    const { mutate: removeUsers, onDone: onDoneremoveUsers } = useMutation(gql`
+    const docs = computed(() => result.value?.docs ?? []);
+    const options = computed(() => docs.value);
+    const { mutate: removeDocs, onDone: onDoneRemoveDocs } = useMutation(gql`
         mutation removeAll($ids: [Int!]!){
-            removeUsers(ids: $ids) {
+            removeDocsByIds(ids: $ids) {
                 id
             }
         }
         `, () => ({
                 variables: {
-                    ids: usersGroup.value.map(i => i.id)
+                    ids: docsGroup.value.map(i => i.id)
                 },
             })
     );
 
-    function upplyRemoveUsers() {
+    function upplyRemoveDocs() {
         showRemovePopup.value = true;
     }
 
-    onDoneremoveUsers(() => {
-        userData.value.name = "";
-        userData.value.surname = "";
-        usersGroup.value = [];
+    onDoneRemoveDocs(() => {
+        docsData.value.title = "";
+        docsData.value.theme = "";
+        docId.value = "";
         showRemovePopup.value = false;
         refetch();
     })
@@ -204,7 +163,7 @@ export default {
     });
 
     watch(
-        () => usersGroup.value,
+        () => docsGroup.value,
         (v) => {
             if(v.length) {
                 disableRemoveButton.value = false;
@@ -219,28 +178,29 @@ export default {
         return {
             result,
             loading,
-            userData,
+            docsData,
             error,
             refetch,
-            users,
-            usersGroup,
-            usersIds,
+            docs,
+            docsGroup,
+            docsIds,
+            docId,
             options,
-            removeUsers,
-            onDoneremoveUsers,
+            removeDocs,
+            onDoneRemoveDocs,
             columns,
             separator: ref('vertical'),
             disableRemoveButton,
             disableEditButton,
             showRemovePopup,
-            upplyRemoveUsers,
+            upplyRemoveDocs,
         }
     },
 }
 </script>
 
 <style scoped lang="scss">
-.users {
+.news {
     &__dialog {
         position: relative;
     }

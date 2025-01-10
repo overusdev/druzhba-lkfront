@@ -3,26 +3,24 @@
         <q-layout view="lHh lpr lFf" container style="min-height: 800px" class="shadow-2 rounded-borders">
             <q-header bordered class="bg-white text-black">
                 <q-toolbar>
-                    <router-link to="/news">
+                    <router-link to="/users">
                         <q-btn flat round dense text-color="black" icon="arrow_back" />
                     </router-link>
-                    <q-toolbar-title>Добавление новой новости</q-toolbar-title>
+                    <q-toolbar-title>Редактирование данных</q-toolbar-title>
                     <q-btn
                         color="secondary"
-                        label="Сохранить данные"
-                        @click="sendNews"/>
+                        label="Обновить данные"
+                        @click="editContactsData"/>
                 </q-toolbar>
             </q-header>
             <q-page-container>
                 <q-page class="q-pa-md">
                     <div class="q-pa-md q-pt-lg" style="max-width: 1000px">
-                        <q-input v-model="newsData.name" label="Заголовок" class="q-mb-lg"/>
-                        
                         <div class="q-mb-lg">
                             <Editor
                                 api-key="no-api-key"
                                 :tinymce-script-src="tinymceScriptSrc"
-                                v-model="newsData.theme"
+                                v-model="contactsData.theme"
                                 :init="{
                                 toolbar_mode: 'sliding',
                                 plugins: plugins,
@@ -38,12 +36,6 @@
                                 }"
                                 initial-value=""
                             />
-                        </div> 
-                        <div class="q-mb-lg">
-                            <p class="text">Предпросмотр</p>
-                                <q-card flat bordered>
-                                <q-card-section v-html="newsData.theme" />
-                            </q-card>
                         </div>
                     </div>
                 </q-page>
@@ -53,11 +45,12 @@
 </template>
 
 <script>
-import { ref, reactive, onMounted, onUnmounted } from 'vue';
+import { computed, reactive, onMounted } from 'vue';
 import gql from 'graphql-tag';
-import { useMutation } from "@vue/apollo-composable";
-import { useRouter } from "vue-router";
 import { DateTime } from "luxon";
+import { useQuery, useMutation } from "@vue/apollo-composable";
+import { useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import Editor from '@tinymce/tinymce-vue';
 
 export default {
@@ -66,7 +59,21 @@ export default {
   },
   setup () {
     let now = DateTime.now().toString();
-    let createDate = DateTime.fromISO(now, { locale: "ru" });
+    let updatedDate = DateTime.fromISO(now, { locale: "ru" });
+    const router = useRouter();
+    const route = useRoute();
+    const contactsData = reactive({
+        updated: '',
+        theme: '',
+    });
+    const CONTACTS = gql`
+        query findOne($id: Int!) {
+            contact(id: $id) {
+                id
+                theme
+            }
+        }
+    `;
     const tinymceScriptSrc = '/plugins/tinymce/tinymce.min.js';
     const plugins = [
         "paste",
@@ -99,34 +106,31 @@ export default {
         "visualchars",
         "wordcount",
     ];
-    const router = useRouter();
-    const newsData = reactive({
-        name: '',
-        theme: '',
-        date: ''
-    });
-    const { mutate: sendNews, onDone } = useMutation(gql`
-        mutation createNewNews(
-            $name: String!,
+    const { result, loading, error, refetch } = useQuery(CONTACTS, () => ({
+        id: 1,
+    }));
+    const contacts = computed(() => result ?? []);
+    const { mutate: editContactsData, onDone } = useMutation(gql`
+        mutation updateContacts(
+            $id: Int!,
+            $updated: String!,
             $theme: String!,
-            $date: String!,
         ){
-            createNews(createNewsInput: { 
-                name: $name,
+            updateContact(updateContactInput: {
+                id: $id,
+                updated: $updated,
                 theme: $theme,
-                date: $date,
             }) {
                     id
-                    name
+                    updated
                     theme
-                    date
                 }
             }
         `, () => ({
                 variables: {
-                    name: newsData.name,
-                    theme: newsData.theme,
-                    date: createDate.toFormat("dd MMMM yyyy hh:mm"),
+                    id: 1,
+                    updated: updatedDate.toFormat("dd MMMM yyyy hh:mm"),
+                    theme: contactsData.theme,
                 },
             })
     );
@@ -137,16 +141,28 @@ export default {
 
     onDone(() => {
         router.push({
-            name: "news",
+            name: "completed-contacts-page",
         });
     })
 
+    onMounted(async () => {
+        const refetchQuery = await refetch();
+        if(refetchQuery.data.contact) {
+            contactsData.id = refetchQuery.data.contact.id;
+            contactsData.theme = refetchQuery.data.contact.theme;
+        }
+    });
+
         return {
-            sendNews,
-            newsData,
+            editContactsData,
+            contactsData,
             onDone,
+            result,
+            loading,
+            refetch,
             router,
-            createDate,
+            route,
+            contacts,
             tinymceScriptSrc,
             plugins,
             fileUpload,

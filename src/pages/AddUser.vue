@@ -20,7 +20,7 @@
                         <q-input v-model="userData.surname" label="Фамилия" />
                         <q-input v-model="userData.patronymic" label="Отчество" />
                         <q-checkbox v-model="userData.isAdmin" label="Является администратором" />
-                        <q-input v-model="userData.area" label="Участок" />
+                        <q-input type="number" v-model="userData.area" label="Участок" />
                         <q-input
                             v-model="userData.phone"
                             label="Номер телефона"
@@ -42,12 +42,15 @@
 <script>
 import { reactive } from 'vue';
 import gql from 'graphql-tag';
+import { DateTime } from "luxon";
 import { useMutation } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
 
 export default {
   setup () {
     const router = useRouter();
+    let now = DateTime.now().toString();
+    let createDate = DateTime.fromISO(now, { locale: "ru" });
     const userData = reactive({
         name: '',
         surname: '',
@@ -58,6 +61,7 @@ export default {
         password: '',
         role: '',
         note: '',
+        date: ''
     });
     const { mutate: sendUser, onDone } = useMutation(gql`
         mutation createUser(
@@ -71,6 +75,7 @@ export default {
             $bcryptpassword: String!,
             $role: String!,
             $note: String!,
+            $date: String!,
         ){
             createUser(createUserInput: { 
                 name: $name,
@@ -83,6 +88,7 @@ export default {
                 bcryptpassword: $bcryptpassword,
                 role: $role,
                 note: $note,
+                date: $date,
             }) {
                     id
                     name
@@ -101,6 +107,7 @@ export default {
                     bcryptpassword: userData.password,
                     role: userData.role,
                     note: userData.note,
+                    date: createDate.toFormat("dd MMMM yyyy hh:mm"),
                 },
             })
     );

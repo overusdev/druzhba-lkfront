@@ -17,7 +17,7 @@
       <q-drawer
         v-model="drawer"
         show-if-above
-        :width="drawerHeight"
+        :width="drawerWidth"
         :breakpoint="400"
       >
         <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
@@ -54,6 +54,42 @@
 
                 <q-item-section>
                   Объявления
+                </q-item-section>
+              </q-item>
+            </router-link>
+
+            <router-link to="/contacts-create" class="router-link disabled">
+              <q-item clickable v-ripple>
+                <q-item-section avatar>
+                <q-icon name="location_on" color="black"/>
+                </q-item-section>
+
+                <q-item-section>
+                  Контакты
+                </q-item-section>
+              </q-item>
+            </router-link>
+
+            <router-link to="/contacts-update" class="router-link">
+              <q-item clickable v-ripple>
+                <q-item-section avatar>
+                <q-icon name="location_on" color="black"/>
+                </q-item-section>
+
+                <q-item-section>
+                  Контакты редактировать
+                </q-item-section>
+              </q-item>
+            </router-link>
+
+            <router-link to="/docs" class="router-link">
+              <q-item clickable v-ripple>
+                <q-item-section avatar>
+                <q-icon name="file_open" color="blue"/>
+                </q-item-section>
+
+                <q-item-section>
+                  Документы
                 </q-item-section>
               </q-item>
             </router-link>
@@ -97,7 +133,7 @@ const drawer = ref(false);
 const loading = ref(false);
 const store = useGeometryStore();
 const authStore = useAuthStore();
-const drawerHeight = computed(() => store.isMobile ? 200 : 300);
+const drawerWidth = computed(() => store.isMobile ? 300 : 400);
 
 function logOut() {
   loading.value = true;
@@ -108,7 +144,6 @@ function logOut() {
 }
 
 onMounted(async () => {
-  // authStore.adminName = authStore.parseJwt(authStore.getCookie('dr_access_token'));
   authStore.adminData.name = authStore.parseJwt(authStore.getCookie('dr_access_token')).username;
   authStore.adminData.isAdmin = authStore.parseJwt(authStore.getCookie('dr_access_token')).isAdmin;
 

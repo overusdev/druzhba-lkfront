@@ -87,20 +87,20 @@ export default {
             sortable: true
         },
         {
-            name: 'theme',
-            required: true,
-            label: 'Описание',
-            align: 'left',
-            field: row => row.theme.replaceAll('&nbsp;', ' ') || '-',
-            format: val => `${val}`,
-            sortable: true
-        },
-        {
             name: 'date',
             required: true,
             label: 'Дата создания',
             align: 'left',
             field: row => row.date || '-',
+            format: val => `${val}`,
+            sortable: true
+        },
+        {
+            name: 'updated',
+            required: true,
+            label: 'Дата обновления',
+            align: 'left',
+            field: row => row.updated || '-',
             format: val => `${val}`,
             sortable: true
         },
@@ -118,6 +118,7 @@ export default {
                 name
                 theme
                 date
+                updated
             }
         }
     `;
