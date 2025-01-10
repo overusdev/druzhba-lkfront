@@ -59,12 +59,10 @@ import { useMutation } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
 import { DateTime } from "luxon";
 import Editor from '@tinymce/tinymce-vue';
-import TinyEditor from "./../components/TinyEditor.vue";
 
 export default {
   components:{
     Editor,
-    TinyEditor
   },
   setup () {
     let now = DateTime.now().toString();
