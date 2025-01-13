@@ -19,9 +19,17 @@ export const useAuthStore = defineStore('auth', () => {
         ));
         console.log('MATCHES', matches);
         console.log('document.cookie', document.cookie);
+        console.log('document', document);
+        console.log('window', window);
         return matches
           ? decodeProtectToken({ apiToken: decodeURIComponent(matches[1]) })
           : undefined;
+    }
+
+    function getCookie1(name) {
+      const fullCookieString = '; ' + document.cookie;
+      const splitCookie = fullCookieString.split('; ' + name + '=');
+      return splitCookie.length === 2 ? decodeProtectToken({ apiToken: decodeURIComponent(splitCookie.pop().split(';').shift()) }) : null;
     }
 
     function parseJwt (token) {
@@ -75,6 +83,7 @@ export const useAuthStore = defineStore('auth', () => {
     return {
         setCookie,
         getCookie,
+        getCookie1,
         deleteCookie,
         checkIsSignedByCookie,
         parseJwt,

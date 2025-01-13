@@ -154,6 +154,7 @@ onMounted(async () => {
 
   console.log('authStore.getCookie("dr_access_token")', authStore.getCookie('dr_access_token'));
   console.log(authStore.parseJwt(authStore.getCookie('dr_access_token')));
+  console.log('getCookie1', authStore.parseJwt(authStore.getCookie1('dr_access_token')));
 
   if(!authStore.adminData.isAdmin) {
     authStore.deleteCookie('dr_access_token');
