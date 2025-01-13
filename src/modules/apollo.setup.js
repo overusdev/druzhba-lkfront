@@ -79,6 +79,9 @@ const apolloClient = new ApolloClient({
     httpLink
   ]),
   credentials: 'include',
+  fetchOptions: {
+    mode: 'no-cors'
+  },
   cache,
 });
 

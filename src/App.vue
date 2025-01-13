@@ -147,8 +147,10 @@ function logOut() {
 }
 
 onMounted(async () => {
-  authStore.adminData.name = authStore.parseJwt(authStore.getCookie('dr_access_token')).username;
-  authStore.adminData.isAdmin = authStore.parseJwt(authStore.getCookie('dr_access_token')).isAdmin;
+  if(authStore.getCookie('dr_access_token')) {
+    authStore.adminData.name = authStore.parseJwt(authStore.getCookie('dr_access_token')).username;
+    authStore.adminData.isAdmin = authStore.parseJwt(authStore.getCookie('dr_access_token')).isAdmin;
+  }
 
   if(!authStore.adminData.isAdmin) {
     authStore.deleteCookie('dr_access_token');
