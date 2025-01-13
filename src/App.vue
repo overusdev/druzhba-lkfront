@@ -152,6 +152,9 @@ onMounted(async () => {
     authStore.adminData.isAdmin = authStore.parseJwt(authStore.getCookie('dr_access_token')).isAdmin;
   }
 
+  console.log('authStore.getCookie("dr_access_token")', authStore.getCookie('dr_access_token'));
+  console.log(authStore.parseJwt(authStore.getCookie('dr_access_token')));
+
   if(!authStore.adminData.isAdmin) {
     authStore.deleteCookie('dr_access_token');
     setTimeout(() => {
