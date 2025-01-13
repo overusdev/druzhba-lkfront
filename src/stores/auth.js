@@ -8,6 +8,9 @@ export const useAuthStore = defineStore('auth', () => {
       name: '',
       isAdmin: '',
     });
+    const domainAuth = import.meta.env === 'production'
+      ? 'https://auth.druzba-nn.ru'
+      : 'http://localhost:8004/';
 
     function getCookie(name) {
         let matches = document.cookie.match(new RegExp(
@@ -21,7 +24,7 @@ export const useAuthStore = defineStore('auth', () => {
     function parseJwt (token) {
         if(!token) {
           console.log('Token not provided');
-          window.location.replace('http://localhost:8004');
+          window.location.replace(domainAuth);
           return;
         }
         let base64Url = token.split('.')[1];

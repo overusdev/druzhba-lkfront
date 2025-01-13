@@ -134,12 +134,15 @@ const loading = ref(false);
 const store = useGeometryStore();
 const authStore = useAuthStore();
 const drawerWidth = computed(() => store.isMobile ? 300 : 400);
+const domainAuth = import.meta.env === 'production'
+  ? 'https://auth.druzba-nn.ru'
+  : 'http://localhost:8004/';
 
 function logOut() {
   loading.value = true;
   authStore.deleteCookie('dr_access_token');
   setTimeout(() => {
-    window.location.replace('http://localhost:8004/');
+    window.location.replace(domainAuth);
   }, 1000);
 }
 
@@ -150,7 +153,7 @@ onMounted(async () => {
   if(!authStore.adminData.isAdmin) {
     authStore.deleteCookie('dr_access_token');
     setTimeout(() => {
-      window.location.replace('http://localhost:8004/');
+      window.location.replace(domainAuth);
     }, 1000);
   }
 
@@ -162,7 +165,7 @@ onMounted(async () => {
     console.log(date.getTime() / 1000);
 
     if(dateNow > tokenExpires) {
-      window.location.replace('http://localhost:8004');
+      window.location.replace(domainAuth);
       return console.log('Oh, I accidentally fell...(((');
     }
   }

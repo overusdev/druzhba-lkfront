@@ -6,9 +6,15 @@ import { ApolloLink, Observable } from 'apollo-link';
 import { decodeProtectToken } from './../modules/decodeProtectToken'
 
 const cache = new InMemoryCache();
+const domainApi = import.meta.env === 'production'
+  ? 'https://druzba-nn.ru/graphql'
+  : 'http://localhost:3001/graphql';
 const httpLink = createHttpLink({
-  uri: 'http://localhost:3001/graphql'
+  uri: domainApi
 });
+const domainAuth = import.meta.env === 'production'
+  ? 'https://auth.druzba-nn.ru'
+  : 'http://localhost:8004/';
 
 function setCookie(name, value, options = {}) {
     
@@ -48,7 +54,7 @@ const errorLink = onError(error => {
     let dateNow = date.getTime() / 1000;
     console.log('Unauthorized', dateNow );
     deleteCookie('dr_access_token');
-    window.location.replace('http://localhost:8004');
+    window.location.replace(domainAuth);
   }
   if (process.env.NODE_ENV !== 'production') {
     logErrorMessages(error);
