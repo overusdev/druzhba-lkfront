@@ -134,7 +134,7 @@ const loading = ref(false);
 const store = useGeometryStore();
 const authStore = useAuthStore();
 const drawerWidth = computed(() => store.isMobile ? 300 : 400);
-const domainAuth = import.meta.env === 'production'
+const domainAuth = import.meta.env.MODE === 'production'
   ? 'https://auth.druzba-nn.ru'
   : 'http://localhost:8004/';
 

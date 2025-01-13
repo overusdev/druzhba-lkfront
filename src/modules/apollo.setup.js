@@ -6,13 +6,13 @@ import { ApolloLink, Observable } from 'apollo-link';
 import { decodeProtectToken } from './../modules/decodeProtectToken'
 
 const cache = new InMemoryCache();
-const domainApi = import.meta.env === 'production'
+const domainApi = import.meta.env.MODE === 'production'
   ? 'https://druzba-nn.ru/graphql'
   : 'http://localhost:3001/graphql';
 const httpLink = createHttpLink({
   uri: domainApi
 });
-const domainAuth = import.meta.env === 'production'
+const domainAuth = import.meta.env.MODE === 'production'
   ? 'https://auth.druzba-nn.ru'
   : 'http://localhost:8004/';
 

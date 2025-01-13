@@ -8,7 +8,7 @@ export const useAuthStore = defineStore('auth', () => {
       name: '',
       isAdmin: '',
     });
-    const domainAuth = import.meta.env === 'production'
+    const domainAuth = import.meta.env.MODE === 'production'
       ? 'https://auth.druzba-nn.ru'
       : 'http://localhost:8004/';
 
