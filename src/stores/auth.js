@@ -18,6 +18,7 @@ export const useAuthStore = defineStore('auth', () => {
           "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
         ));
         console.log('MATCHES', matches);
+        console.log('document.cookie', document.cookie);
         return matches
           ? decodeProtectToken({ apiToken: decodeURIComponent(matches[1]) })
           : undefined;
