@@ -151,10 +151,10 @@ onMounted(async () => {
 
     authStore.adminData.name = authStore.parseJwt(authStore.getCookie('dr_access_token')).username;
     authStore.adminData.isAdmin = authStore.parseJwt(authStore.getCookie('dr_access_token')).isAdmin;
-    // authStore.adminData.name = authStore.parseJwt(authStore.getStorageItem('dr_access_token')).username;
-    // authStore.adminData.isAdmin = authStore.parseJwt(authStore.getStorageItem('dr_access_token')).isAdmin;
+  //   // authStore.adminData.name = authStore.parseJwt(authStore.getStorageItem('dr_access_token')).username;
+  //   // authStore.adminData.isAdmin = authStore.parseJwt(authStore.getStorageItem('dr_access_token')).isAdmin;
 
-  console.log('localStorage.getItem', localStorage.getItem('dr_access_token'));
+  // console.log('localStorage.getItem', localStorage.getItem('dr_access_token'));
 
   if(!authStore.adminData.isAdmin) {
     console.log('authStore.adminData.isAdmin', authStore.adminData.isAdmin);

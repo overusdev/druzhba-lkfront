@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JWT html</title>
+</head>
+<body>
+    <script type="module">
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const token = urlParams.get('token');
+
+        function setCookie(name, value, options = {}) {
+            
+            options = {
+                path: '/',
+            // при необходимости добавьте другие значения по умолчанию
+                ...options
+            };
+        
+            if (options.expires instanceof Date) {
+                options.expires = options.expires.toUTCString();
+            }
+        
+            let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+        
+            for (let optionKey in options) {
+                updatedCookie += "; " + optionKey;
+                let optionValue = options[optionKey];
+                if (optionValue !== true) {
+                    updatedCookie += "=" + optionValue;
+                }
+            }
+        
+            document.cookie = updatedCookie;
+        }
+
+        if(token) {
+            setCookie('dr_access_token', token);
+            window.location.replace('http://localhost:8000/users');
+        }
+        console.log('JWT html', token);
+    </script>
+</body>
+</html>
