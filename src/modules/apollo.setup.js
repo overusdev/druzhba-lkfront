@@ -80,8 +80,8 @@ const apolloClient = new ApolloClient({
     authLink,
     httpLink
   ]),
-  // credentials: 'include',
-  credentials: 'same-origin',
+  credentials: 'include',
+  // credentials: 'same-origin',
   fetchOptions: {
     mode: 'no-cors'
   },
