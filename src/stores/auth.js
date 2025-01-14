@@ -26,10 +26,12 @@ export const useAuthStore = defineStore('auth', () => {
           : undefined;
     }
 
-    function getCookie1(name) {
-      const fullCookieString = '; ' + document.cookie;
-      const splitCookie = fullCookieString.split('; ' + name + '=');
-      return splitCookie.length === 2 ? decodeProtectToken({ apiToken: decodeURIComponent(splitCookie.pop().split(';').shift()) }) : null;
+    function getStorageItem(item) {
+      console.log(item);
+      console.log(localStorage.getItem('dr_access_token'));
+        return item
+          ? decodeProtectToken({ apiToken: decodeURIComponent(localStorage.getItem(item)) })
+          : undefined;
     }
 
     function parseJwt (token) {
@@ -83,10 +85,10 @@ export const useAuthStore = defineStore('auth', () => {
     return {
         setCookie,
         getCookie,
-        getCookie1,
         deleteCookie,
         checkIsSignedByCookie,
         parseJwt,
         adminData,
+        getStorageItem,
     }
 });

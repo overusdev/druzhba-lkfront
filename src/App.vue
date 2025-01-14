@@ -141,23 +141,25 @@ const domainAuth = import.meta.env.MODE === 'production'
 function logOut() {
   loading.value = true;
   authStore.deleteCookie('dr_access_token');
+  // localStorage.removeItem('dr_access_token');
   setTimeout(() => {
     window.location.replace(domainAuth);
   }, 1000);
 }
 
 onMounted(async () => {
-  if(authStore.getCookie('dr_access_token')) {
+
     authStore.adminData.name = authStore.parseJwt(authStore.getCookie('dr_access_token')).username;
     authStore.adminData.isAdmin = authStore.parseJwt(authStore.getCookie('dr_access_token')).isAdmin;
-  }
+    // authStore.adminData.name = authStore.parseJwt(authStore.getStorageItem('dr_access_token')).username;
+    // authStore.adminData.isAdmin = authStore.parseJwt(authStore.getStorageItem('dr_access_token')).isAdmin;
 
-  console.log('authStore.getCookie("dr_access_token")', authStore.getCookie('dr_access_token'));
-  console.log(authStore.parseJwt(authStore.getCookie('dr_access_token')));
-  console.log('getCookie1', authStore.parseJwt(authStore.getCookie1('dr_access_token')));
+  console.log('localStorage.getItem', localStorage.getItem('dr_access_token'));
 
   if(!authStore.adminData.isAdmin) {
+    console.log('authStore.adminData.isAdmin', authStore.adminData.isAdmin);
     authStore.deleteCookie('dr_access_token');
+    // localStorage.removeItem('dr_access_token');
     setTimeout(() => {
       window.location.replace(domainAuth);
     }, 1000);
@@ -177,6 +179,7 @@ onMounted(async () => {
   }
   setInterval(async() => {
     await checkTokenExpires(authStore.parseJwt(authStore.getCookie('dr_access_token')).exp);
+    // await checkTokenExpires(authStore.parseJwt(localStorage.getItem('dr_access_token')).exp);
   }, 2000);
 });
 
