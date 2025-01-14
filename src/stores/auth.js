@@ -13,24 +13,11 @@ export const useAuthStore = defineStore('auth', () => {
       : 'http://localhost:8004/';
 
     function getCookie(name) {
-      console.log('NAME', name);
         let matches = document.cookie.match(new RegExp(
           "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
         ));
-        console.log('MATCHES', matches);
-        console.log('document.cookie', document.cookie);
-        console.log('document', document);
-        console.log('window', window);
         return matches
           ? decodeProtectToken({ apiToken: decodeURIComponent(matches[1]) })
-          : undefined;
-    }
-
-    function getStorageItem(item) {
-      console.log(item);
-      console.log(localStorage.getItem('dr_access_token'));
-        return item
-          ? decodeProtectToken({ apiToken: decodeURIComponent(localStorage.getItem(item)) })
           : undefined;
     }
 
@@ -89,6 +76,5 @@ export const useAuthStore = defineStore('auth', () => {
         checkIsSignedByCookie,
         parseJwt,
         adminData,
-        getStorageItem,
     }
 });

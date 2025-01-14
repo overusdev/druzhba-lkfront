@@ -54,7 +54,6 @@ const errorLink = onError(error => {
     let dateNow = date.getTime() / 1000;
     console.log('Unauthorized', dateNow );
     deleteCookie('dr_access_token');
-    // localStorage.removeItem('dr_access_token');
     window.location.replace(domainAuth);
   }
   if (process.env.NODE_ENV !== 'production') {
@@ -64,7 +63,6 @@ const errorLink = onError(error => {
 
 const authLink = setContext((_, { headers }) => {
   const jwt = getCookie('dr_access_token');
-  // const jwt = localStorage.getItem('dr_access_token');
 
   return {
     headers: {
@@ -81,7 +79,6 @@ const apolloClient = new ApolloClient({
     httpLink
   ]),
   credentials: 'include',
-  // credentials: 'same-origin',
   fetchOptions: {
     mode: 'no-cors'
   },
