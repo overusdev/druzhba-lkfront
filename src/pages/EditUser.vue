@@ -6,93 +6,100 @@
                     <router-link to="/users">
                         <q-btn flat round dense text-color="black" icon="arrow_back" />
                     </router-link>
-                    <q-toolbar-title>Редактироване данных участка {{ userData.area }}</q-toolbar-title>
-                    <q-btn
-                        color="secondary"
-                        label="Сохранить данные"
-                        @click="editUser"/>
-                    <q-btn
-                        class="q-ml-sm"
-                        color="red"
-                        icon="delete"
-                        @click="upplyRemoveUser"/>
+                    <div class="user__toolbar-title">
+                        Редактирование данных участка {{ userData.area }}
+                    </div>
                 </q-toolbar>
             </q-header>
             <q-page-container>
-                <q-page class="q-pa-md">
-                    <div class="q-pa-md q-pt-lg" style="max-width: 800px">
-                        <q-input v-model="userData.name" label="Имя" />
-                        <q-input v-model="userData.surname" label="Фамилия" />
-                        <q-input v-model="userData.patronymic" label="Отчество" />
-                        <q-checkbox v-model="userData.isAdmin" label="Является администратором" />
-                        <q-input type="number" v-model="userData.area" label="Участок" />
-                        <q-input
-                            v-model="userData.phone"
-                            label="Номер телефона"
-                            mask="##########"
-                        />
-                        <q-input v-model="userData.password" label="Пароль участка" />
-                        <q-input
-                            v-model="userData.bcryptpassword"
-                            label="bcrypt-пароль участка"
-                            readonly
-                            class="user__input user__input--readonly"
-                        />
-                        <q-input
-                            class="q-mt-xl"
-                            label="Комментарии"
-                            v-model="userData.note"
-                            autogrow
-                        />
+                <q-page class="q-pa-lg">
+                    <div class="user__action-panel">
+                        <div
+                            class="user__save-button"
+                            :class="{'user__save-button--disabled': !disableSaveBtn }"
+                            @click="editUser"
+                        >
+                            Сохранить данные
+                        </div>
+                        <div
+                            class="user__remove-button"
+                            @click="upplyRemoveUser"
+                        >
+                            Удалить
+                        </div>
+                    </div>
+
+                    <div class="q-pt-lg" style="max-width: 800px">
+                        <q-input class="user__input" v-model="userData.name" label="Имя" />
+                        <q-input class="user__input" v-model="userData.surname" label="Фамилия" />
+                        <q-input class="user__input" v-model="userData.patronymic" label="Отчество" />
+                        <q-checkbox class="user__input" v-model="userData.isAdmin" label="Является администратором" />
+                        <q-input class="user__input" type="number" v-model="userData.area" label="Участок" />
+                        <q-input class="user__input" v-model="userData.phone" label="Номер телефона" mask="##########" />
+                        <q-input class="user__input" v-model="userData.password" label="Пароль участка" />
+                        <q-input v-model="userData.bcryptpassword" label="bcrypt-пароль участка" readonly
+                            class="user__input user__input--readonly" />
+                        <q-input class="q-mt-xl" label="Комментарии" v-model="userData.note" autogrow />
                     </div>
                 </q-page>
             </q-page-container>
         </q-layout>
-        <q-dialog v-model="showRemovePopup">
-            <q-card class="user__dialog">
-                <q-card-section class="q-pt-xl">
-                    <p class="text text-red">Действительно удалить все данные по участку?</p>
-                    <q-btn flat no-caps icon="close" class="user__close-icon" v-close-popup />
-                    <q-btn
-                        color="red"
-                        icon="delete"
-                        label="Да, удалить"
-                        @click="removeUser"/>
-                </q-card-section>
-            </q-card>
-        </q-dialog>
+        <ConfirmDialog
+            v-model="showRemovePopup"
+            text="После подтверждения действия, данные будут безвозвратно удалены.
+                    Действительно удалить все данные по участку?"
+            @update:modelValue="removeUser"
+            @close="showRemovePopup = false"
+        />
     </div>
 </template>
 
 <script>
-import { ref, computed, reactive, onMounted } from 'vue';
+import { ref, computed, reactive, onMounted, watch } from 'vue';
 import gql from 'graphql-tag';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
 import { DateTime } from "luxon";
+import ConfirmDialog from '../components/ConfirmDialog.vue';
 
 export default {
-  setup () {
-    const disableEditButton = ref(true);
-    const showRemovePopup = ref(false);
-    const router = useRouter();
-    const route = useRoute();
-    let now = DateTime.now().toString();
-    let updatedDate = DateTime.fromISO(now, { locale: "ru" });
-    const userData = reactive({
-        name: '',
-        surname: '',
-        patronymic: '',
-        isAdmin: false,
-        area: '',
-        phone: '',
-        password: '',
-        bcryptpassword: '',
-        role: '',
-        note: ''
-    });
-    const USERS = gql`
+    components: {
+        ConfirmDialog
+    },
+    setup() {
+        const disableEditButton = ref(true);
+        const showRemovePopup = ref(false);
+        const router = useRouter();
+        const route = useRoute();
+        let now = DateTime.now().toString();
+        let updatedDate = DateTime.fromISO(now, { locale: "ru" });
+        const disableSaveBtn = ref(false);
+        const userData = ref({
+            name: '',
+            surname: '',
+            patronymic: '',
+            isAdmin: false,
+            area: '',
+            phone: '',
+            password: '',
+            bcryptpassword: '',
+            role: '',
+            note: ''
+        });
+        const userDataLock = ref({
+            name: '',
+            surname: '',
+            patronymic: '',
+            isAdmin: false,
+            area: '',
+            phone: '',
+            password: '',
+            bcryptpassword: '',
+            role: '',
+            note: ''
+        });
+        const USERS = gql`
         query findOne($id: Int!) {
             user(id: $id) {
                 id
@@ -109,11 +116,11 @@ export default {
             }
         }
     `;
-    const { result, loading, error, refetch } = useQuery(USERS, () => ({
-        id: Number(route.params.id),
-    }));
-    const user = computed(() => result ?? []);
-    const { mutate: editUser, onDone } = useMutation(gql`
+        const { result, loading, error, refetch } = useQuery(USERS, () => ({
+            id: Number(route.params.id),
+        }));
+        const user = computed(() => result ?? []);
+        const { mutate: editUser, onDone } = useMutation(gql`
         mutation updateUser(
             $id: Int!,
             $name: String!,
@@ -148,68 +155,94 @@ export default {
                 }
             }
         `, () => ({
-                variables: {
-                    id: Number(route.params.id),
-                    name: userData.name,
-                    surname: userData.surname,
-                    patronymic: userData.patronymic,
-                    isAdmin: userData.isAdmin,
-                    area: userData.area,
-                    phone: userData.phone,
-                    password: userData.password,
-                    bcryptpassword: userData.password,
-                    role: userData.role,
-                    note: userData.note,
-                    updated: updatedDate.toFormat("dd MMMM yyyy hh:mm"),
-                },
-            })
-    );
+            variables: {
+                id: Number(route.params.id),
+                name: userData.value.name,
+                surname: userData.value.surname,
+                patronymic: userData.value.patronymic,
+                isAdmin: userData.value.isAdmin,
+                area: userData.value.area,
+                phone: userData.value.phone,
+                password: userData.value.password,
+                bcryptpassword: userData.value.password,
+                role: userData.value.role,
+                note: userData.value.note,
+                updated: updatedDate.toFormat("dd MMMM yyyy hh:mm"),
+            },
+        })
+        );
 
-    const { mutate: removeUser, onDone: onDoneremoveUser } = useMutation(gql`
+        const { mutate: removeUser, onDone: onDoneremoveUser } = useMutation(gql`
         mutation removeAll($ids: [Int!]!){
             removeUsers(ids: $ids) {
                 id
             }
         }
         `, () => ({
-                variables: {
-                    ids: [Number(route.params.id)]
-                },
-            })
-    );
+            variables: {
+                ids: [Number(route.params.id)]
+            },
+        })
+        );
 
-    onDone(() => {
-        router.push({
-            name: "users",
-        });
-    })
+        onDone(() => {
+            router.push({
+                name: "users",
+            });
+        })
 
-    onDoneremoveUser(() => {
-        router.push({
-            name: "users",
-        });
-    })
+        onDoneremoveUser(() => {
+            router.push({
+                name: "users",
+            });
+        })
 
-    function upplyRemoveUser() {
-        showRemovePopup.value = true;
-    }
-
-    onMounted(async () => {
-        const refetchQuery = await refetch();
-        if(refetchQuery.data.user) {
-            userData.id = refetchQuery.data.user.id;
-            userData.name = refetchQuery.data.user.name;
-            userData.surname = refetchQuery.data.user.surname;
-            userData.patronymic = refetchQuery.data.user.patronymic;
-            userData.area = refetchQuery.data.user.area;
-            userData.phone = refetchQuery.data.user.phone;
-            userData.isAdmin = refetchQuery.data.user.isAdmin;
-            userData.password = refetchQuery.data.user.password;
-            userData.bcryptpassword = refetchQuery.data.user.bcryptpassword;
-            userData.role = refetchQuery.data.user.role;
-            userData.note = refetchQuery.data.user.note;
+        function upplyRemoveUser() {
+            showRemovePopup.value = true;
         }
-    });
+
+        onMounted(async () => {
+            const refetchQuery = await refetch();
+            if (refetchQuery.data.user) {
+                userData.value.id = refetchQuery.data.user.id;
+                userData.value.name = refetchQuery.data.user.name;
+                userData.value.surname = refetchQuery.data.user.surname;
+                userData.value.patronymic = refetchQuery.data.user.patronymic;
+                userData.value.area = refetchQuery.data.user.area;
+                userData.value.phone = refetchQuery.data.user.phone;
+                userData.value.isAdmin = refetchQuery.data.user.isAdmin;
+                userData.value.password = refetchQuery.data.user.password;
+                userData.value.bcryptpassword = refetchQuery.data.user.bcryptpassword;
+                userData.value.role = refetchQuery.data.user.role;
+                userData.value.note = refetchQuery.data.user.note;
+
+                userDataLock.value.id = refetchQuery.data.user.id;
+                userDataLock.value.name = refetchQuery.data.user.name;
+                userDataLock.value.surname = refetchQuery.data.user.surname;
+                userDataLock.value.patronymic = refetchQuery.data.user.patronymic;
+                userDataLock.value.area = refetchQuery.data.user.area;
+                userDataLock.value.phone = refetchQuery.data.user.phone;
+                userDataLock.value.isAdmin = refetchQuery.data.user.isAdmin;
+                userDataLock.value.password = refetchQuery.data.user.password;
+                userDataLock.value.bcryptpassword = refetchQuery.data.user.bcryptpassword;
+                userDataLock.value.role = refetchQuery.data.user.role;
+                userDataLock.value.note = refetchQuery.data.user.note;
+            }
+        });
+
+        watch(
+            () => userData.value,
+            (v) => {
+                if(JSON.stringify(v) !== JSON.stringify(userDataLock.value)) {
+                    disableSaveBtn.value = true;
+                } else {
+                    disableSaveBtn.value = false;
+                }
+            },
+            {
+                deep: true,
+            }
+        );
 
         return {
             editUser,
@@ -225,7 +258,9 @@ export default {
             showRemovePopup,
             onDoneremoveUser,
             removeUser,
-            upplyRemoveUser
+            upplyRemoveUser,
+            disableSaveBtn,
+            userDataLock,
         }
     },
 }
@@ -236,15 +271,83 @@ export default {
     &__dialog {
         position: relative;
     }
+
     &__close-icon {
         position: absolute;
         top: 10px;
         right: 6px;
     }
+
     &__input {
+        margin-bottom: 12px;
         &--readonly {
             opacity: .5;
         }
+    }
+
+    &__action-panel {
+        @media screen and (min-width: 768px) {
+            display: flex;
+            align-items: center;
+        }
+    }
+
+    &__save-button {
+        display: inline-block;
+        padding: 12px;
+        border: 3px solid #3794ae;
+        background: #f0f9ff;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        margin-right: 12px;
+
+        &--disabled {
+            opacity: .5;
+            cursor: pointer;
+        }
+
+        @media screen and (min-width: 768px) {
+            cursor: pointer;
+        }
+    }
+
+    &__remove-button {
+        display: inline-block;
+        padding: 12px;
+        border: 3px solid #b71c1c;
+        background: #fff6fb;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        margin-right: 12px;
+
+        @media screen and (min-width: 768px) {
+            cursor: pointer;
+        }
+    }
+
+    &__toolbar-title {
+        font-size: 18px;
+    }
+
+    &__toolbar-link {
+        color: #006689;
+        text-decoration: none;
+
+        @media screen and (min-width: 768px) {
+            cursor: pointer;
+        }
+
+        &:visited {
+            color: #006689;
+        }
+    }
+
+    :deep(.q-field__native, .q-field__prefix, .q-field__suffix, .q-field__input) {
+        font-size: 16px !important;
+    }
+
+    :deep(.q-field__label) {
+        top: 15px !important;
     }
 }
 </style>

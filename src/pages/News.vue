@@ -9,7 +9,12 @@
                 <q-toolbar>
                     <q-toolbar-title>Список новостей <span class="text-weight-bold">всего: {{ news.length }}</span></q-toolbar-title>
                     <router-link to="/add-news">
-                        <q-btn color="white" text-color="black" icon="add" label="Добавить новость" />
+                        <q-btn
+                            color="white"
+                            text-color="black"
+                            icon="add"
+                            :label="!store.isMobile ? 'Добавить новость' : ''"
+                        />
                     </router-link>
                     <router-link :to="`/edit-news/${ newsGroup.length ? newsGroup[0].id : null}`">
                         <q-btn
@@ -17,20 +22,36 @@
                             color="white"
                             icon="edit"
                             text-color="black"
-                            label="Редактировать"
-                            :disable="disableEditButton"/>
+                            :label="!store.isMobile ? 'Редактировать' : ''"
+                            :disable="disableEditButton"
+                        />
                     </router-link>
                     <q-btn
                         class="q-ml-sm"
-                        color="red"
+                        color="red-10"
                         icon="delete"
-                        label="Удалить выбранную"
+                        :label="!store.isMobile ? 'Удалить выбранную' : ''"
                         :disable="disableRemoveButton"
-                        @click="upplyRemoveNews"/>
+                        @click="upplyRemoveNews"
+                    >
+                        <q-tooltip
+                            v-if="disableRemoveButton"
+                            v-model="showingRemoveTooltip"
+                            anchor="bottom left" self="top middle"
+                            class="bg-grey-1 text-subtitle1 text-black shadow-4"
+                            :offset="[10, 10]"
+                        >Удалять можно только выбранный элемент
+                        </q-tooltip>
+                    </q-btn>
                 </q-toolbar>
             </q-header>
             <q-page-container>
                 <q-page class="q-pa-md">
+                    <ToolbarNote
+                        msg="Редакторование новостей раздела"
+                        link="https://www.druzba-nn.ru/news"
+                        class="news__toolbar-note"
+                    />
                     <q-table
                         :rows="news"
                         :columns="columns"
@@ -70,12 +91,19 @@
 import { ref, reactive, computed, onMounted, watch } from 'vue';
 import gql from 'graphql-tag';
 import { useQuery, useMutation } from "@vue/apollo-composable";
+import { useGeometryStore } from '../stores/geometry';
+import ToolbarNote from '../components/ToolbarNote.vue';
 
 export default {
+  components:{
+    ToolbarNote,
+  },
   setup () {
     const disableRemoveButton = ref(true);
     const disableEditButton = ref(true);
     const showRemovePopup = ref(false);
+    const store = useGeometryStore();
+    const showingRemoveTooltip = ref(false);
     const columns = [
         {
             name: 'name',
@@ -190,6 +218,8 @@ export default {
             disableEditButton,
             showRemovePopup,
             upplyRemoveNews,
+            store,
+            showingRemoveTooltip,
         }
     },
 }
@@ -204,6 +234,17 @@ export default {
         position: absolute;
         top: 10px;
         right: 6px;
+    }
+
+    &__toolbar-note {
+        margin-bottom: 16px;
+    }
+
+    :deep(.q-table tbody td) {
+        font-size: 16px;
+    }
+    :deep(.q-table th.sortable) {
+        font-size: 16px;
     }
 }
 </style>

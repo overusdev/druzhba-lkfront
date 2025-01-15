@@ -9,7 +9,12 @@
                 <q-toolbar>
                     <q-toolbar-title>Список объявлений <span class="text-weight-bold">всего: {{ ads.length }}</span></q-toolbar-title>
                     <router-link to="/add-ad">
-                        <q-btn color="white" text-color="black" icon="add" label="Добавить объявление" />
+                        <q-btn
+                            color="white"
+                            text-color="black"
+                            icon="add"
+                            :label="!store.isMobile ? 'Добавить объявление' : ''"
+                        />
                     </router-link>
                     <router-link :to="`/edit-ad/${ adsGroup.length ? adsGroup[0].id : null}`">
                         <q-btn
@@ -17,20 +22,35 @@
                             color="white"
                             icon="edit"
                             text-color="black"
-                            label="Редактировать"
+                            :label="!store.isMobile ? 'Редактировать' : ''"
                             :disable="disableEditButton"/>
                     </router-link>
                     <q-btn
                         class="q-ml-sm"
-                        color="red"
+                        color="red-10"
                         icon="delete"
-                        label="Удалить выбранную"
+                        :label="!store.isMobile ? 'Удалить выбранное' : ''"
                         :disable="disableRemoveButton"
-                        @click="upplyRemoveAd"/>
+                        @click="upplyRemoveAd"
+                    >
+                        <q-tooltip
+                            v-if="disableRemoveButton"
+                            v-model="showingRemoveTooltip"
+                            anchor="bottom left" self="top middle"
+                            class="bg-grey-1 text-subtitle1 text-black shadow-4"
+                            :offset="[10, 10]"
+                        >Удалять можно только выбранный элемент
+                        </q-tooltip>
+                    </q-btn>
                 </q-toolbar>
             </q-header>
             <q-page-container>
                 <q-page class="q-pa-md">
+                    <ToolbarNote
+                        msg="Редакторование объявлений раздела"
+                        link="https://www.druzba-nn.ru/ads"
+                        class="ads__toolbar-note"
+                    />
                     <q-table
                         :rows="ads"
                         :columns="columns"
@@ -50,19 +70,12 @@
                 </q-page>
             </q-page-container>
         </q-layout>
-        <q-dialog v-model="showRemovePopup">
-            <q-card class="ads__dialog">
-                <q-card-section class="q-pt-xl">
-                    <p class="text text-red">Действительно удалить объявление?</p>
-                    <q-btn flat no-caps icon="close" class="ads__close-icon" v-close-popup />
-                    <q-btn
-                        color="red"
-                        icon="delete"
-                        label="Да, удалить"
-                        @click="removeAd"/>
-                </q-card-section>
-            </q-card>
-        </q-dialog>
+        <ConfirmDialog
+            v-model="showRemovePopup"
+            text="После подтверждения действия, данные будут безвозвратно удалены.
+                    Действительно удалить объявление?"
+            @update:modelValue="removeAd"
+        />
     </div>
 </template>
 
@@ -70,12 +83,21 @@
 import { ref, reactive, computed, onMounted, watch } from 'vue';
 import gql from 'graphql-tag';
 import { useQuery, useMutation } from "@vue/apollo-composable";
+import { useGeometryStore } from '../stores/geometry';
+import ToolbarNote from '../components/ToolbarNote.vue';
+import ConfirmDialog from '../components/ConfirmDialog.vue';
 
 export default {
+  components:{
+    ToolbarNote,
+    ConfirmDialog
+  },
   setup () {
     const disableRemoveButton = ref(true);
     const disableEditButton = ref(true);
     const showRemovePopup = ref(false);
+    const store = useGeometryStore();
+    const showingRemoveTooltip = ref(false);
     const columns = [
         {
             name: 'name',
@@ -188,6 +210,8 @@ export default {
             disableEditButton,
             showRemovePopup,
             upplyRemoveAd,
+            store,
+            showingRemoveTooltip,
         }
     },
 }
@@ -202,6 +226,15 @@ export default {
         position: absolute;
         top: 10px;
         right: 6px;
+    }
+    &__toolbar-note {
+        margin-bottom: 16px;
+    }
+    :deep(.q-table tbody td) {
+        font-size: 16px;
+    }
+    :deep(.q-table th.sortable) {
+        font-size: 16px;
     }
 }
 </style>

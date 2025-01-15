@@ -7,7 +7,7 @@
     <q-spinner-puff class="teal" size="5.5em" />
     </div>
     <q-layout v-else view="lHh Lpr lff" container style="height: 100vh" class="shadow-2 rounded-borders">
-      <q-header elevated class="bg-cyan-8">
+      <q-header elevated class="bg-cyan-10">
         <q-toolbar>
           <q-btn flat @click="drawer = !drawer" round dense icon="menu" />
           <q-toolbar-title>Панель администратора</q-toolbar-title>
@@ -19,6 +19,7 @@
         show-if-above
         :width="drawerWidth"
         :breakpoint="400"
+        class="sidebar"
       >
         <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
           <q-list padding>
@@ -28,7 +29,7 @@
                 <q-icon name="people" color="blue" />
                 </q-item-section>
 
-                <q-item-section>
+                <q-item-section class="sidebar__item-text">
                   Участки
                 </q-item-section>
               </q-item>
@@ -40,7 +41,7 @@
                 <q-icon name="newspaper" color="orange" />
                 </q-item-section>
 
-                <q-item-section>
+                <q-item-section class="sidebar__item-text">
                   Новости
                 </q-item-section>
               </q-item>
@@ -52,7 +53,7 @@
                 <q-icon name="description" color="green"/>
                 </q-item-section>
 
-                <q-item-section>
+                <q-item-section class="sidebar__item-text">
                   Объявления
                 </q-item-section>
               </q-item>
@@ -64,7 +65,7 @@
                 <q-icon name="location_on" color="black"/>
                 </q-item-section>
 
-                <q-item-section>
+                <q-item-section class="sidebar__item-text">
                   Контакты
                 </q-item-section>
               </q-item>
@@ -76,7 +77,7 @@
                 <q-icon name="location_on" color="black"/>
                 </q-item-section>
 
-                <q-item-section>
+                <q-item-section class="sidebar__item-text">
                   Контакты редактировать
                 </q-item-section>
               </q-item>
@@ -88,7 +89,7 @@
                 <q-icon name="file_open" color="blue"/>
                 </q-item-section>
 
-                <q-item-section>
+                <q-item-section class="sidebar__item-text">
                   Документы
                 </q-item-section>
               </q-item>
@@ -99,7 +100,7 @@
                 <q-icon name="logout" color="red"/>
               </q-item-section>
 
-              <q-item-section @click="logOut">
+              <q-item-section class="sidebar__item-text" @click="logOut">
                 Выйти
               </q-item-section>
             </q-item>
@@ -109,7 +110,9 @@
         <q-img class="absolute-top" src="https://cdn.quasar.dev/img/material.png" style="height: 150px">
           <div class="absolute-bottom bg-transparent">
             <q-avatar size="56px" class="q-mb-sm">
-              <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+              <!-- <img v-if="authStore.adminData.name === 'Сергей'" src="https://cdn.quasar.dev/img/boy-avatar.png">
+              <AdminGirl class="sidebar__admin-icon"/> -->
+              <component :is="components[currentSheet]" class="sidebar__admin-icon"/>
             </q-avatar>
             <div v-if="authStore.adminData.name" class="text-weight-bold">{{ authStore.adminData.name }}</div>
             <div>Администратор</div>
@@ -128,7 +131,14 @@
 import { ref, computed, reactive, onMounted } from 'vue';
 import { useGeometryStore } from './stores/geometry';
 import { useAuthStore } from './stores/auth';
+import AdminGirl from './components/icons/admin-girl.vue';
+import AdminBoy from './components/icons/AdminBoy.vue';
 
+const components = {
+  AdminGirl,
+  AdminBoy,
+};
+const currentSheet = computed(() => authStore.adminData.name === 'Сергей' ? 'AdminBoy' : 'AdminGirl');
 const drawer = ref(false);
 const loading = ref(false);
 const store = useGeometryStore();
@@ -171,6 +181,16 @@ onMounted(async () => {
 
 </script>
 <style scoped lang="scss">
+
+.sidebar {
+  &__admin-icon {
+    width: 40px;
+    height: 40px;
+  }
+  &__item-text {
+    font-size: 16px;
+  }
+}
 .no-access {
   position: fixed;
   width: 100%;
