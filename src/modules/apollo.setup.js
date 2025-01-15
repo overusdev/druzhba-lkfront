@@ -17,7 +17,6 @@ const domainAuth = import.meta.env.MODE === 'production'
   : 'http://localhost:8004/';
 
 function setCookie(name, value, options = {}) {
-    
   options = {
     path: '/',
     // при необходимости добавьте другие значения по умолчанию
