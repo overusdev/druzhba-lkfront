@@ -37,7 +37,7 @@ function setCookie(name, value, options = {}) {
     }
   }
 
-  document.cookie = updatedCookie;
+  document.cookie = updatedCookie; 
 }
 
 function deleteCookie(name) {
