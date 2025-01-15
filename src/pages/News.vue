@@ -78,19 +78,6 @@
             @update:modelValue="removeNews"
             @close="showRemovePopup = false"
         />
-                <!-- <q-dialog v-model="showRemovePopup">
-                    <q-card class="news__dialog">
-                        <q-card-section class="q-pt-xl">
-                            <p class="text text-red">Действительно удалить новость?</p>
-                            <q-btn flat no-caps icon="close" class="news__close-icon" v-close-popup />
-                            <q-btn
-                                color="red"
-                                icon="delete"
-                                label="Да, удалить"
-                                @click="removeNews"/>
-                        </q-card-section>
-                    </q-card>
-                </q-dialog> -->
     </div>
 </template>
 
