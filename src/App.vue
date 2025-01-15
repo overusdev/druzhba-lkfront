@@ -140,11 +140,7 @@ const domainAuth = import.meta.env.MODE === 'production'
 
 function logOut() {
   loading.value = true;
-  authStore.deleteCookie('dr_access_token');
-  // localStorage.removeItem('dr_access_token');
-  setTimeout(() => {
-    window.location.replace(domainAuth);
-  }, 1000);
+  authStore.logOut('dr_access_token');
 }
 
 onMounted(async () => {
@@ -153,11 +149,7 @@ onMounted(async () => {
     authStore.adminData.isAdmin = authStore.parseJwt(authStore.getCookie('dr_access_token')).isAdmin;
 
   if(!authStore.adminData.isAdmin) {
-    authStore.deleteCookie('dr_access_token');
-    // localStorage.removeItem('dr_access_token');
-    setTimeout(() => {
-      window.location.replace(domainAuth);
-    }, 1000);
+    authStore.logOut('dr_access_token');
   }
 
   async function checkTokenExpires(tokenExpires) {

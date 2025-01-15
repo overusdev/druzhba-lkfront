@@ -45,7 +45,6 @@ export const useAuthStore = defineStore('auth', () => {
     }
     
     function setCookie(name, value, options = {}) {
-    
         options = {
           path: '/',
           // при необходимости добавьте другие значения по умолчанию
@@ -69,6 +68,13 @@ export const useAuthStore = defineStore('auth', () => {
         document.cookie = updatedCookie;
     }
 
+    function logOut(domainAuth) {
+      deleteCookie('dr_access_token');
+      setTimeout(() => {
+        window.location.replace(domainAuth);
+      }, 1000);
+    }
+
     return {
         setCookie,
         getCookie,
@@ -76,5 +82,6 @@ export const useAuthStore = defineStore('auth', () => {
         checkIsSignedByCookie,
         parseJwt,
         adminData,
+        logOut
     }
 });
