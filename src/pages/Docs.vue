@@ -75,6 +75,7 @@
             text="После подтверждения действия, данные будут безвозвратно удалены.
                     Действительно удалить документ?"
             @update:modelValue="removeDocs"
+            @close="showRemovePopup = false"
         />
     </div>
 </template>

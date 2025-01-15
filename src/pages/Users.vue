@@ -38,6 +38,7 @@
             text="После подтверждения действия, данные будут безвозвратно удалены.
                     Действительно удалить все данные по участку?"
             @update:modelValue="removeUsers"
+            @close="showRemovePopup = false"
         />
     </div>
 </template>

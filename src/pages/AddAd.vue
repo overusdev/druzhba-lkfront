@@ -1,22 +1,29 @@
 <template>
-    <div class="q-pa-md">
+    <div class="new-ad q-pa-md">
         <q-layout view="lHh lpr lFf" container style="min-height: 800px" class="shadow-2 rounded-borders">
             <q-header bordered class="bg-white text-black">
                 <q-toolbar>
                     <router-link to="/ads">
                         <q-btn flat round dense text-color="black" icon="arrow_back" />
                     </router-link>
-                    <q-toolbar-title>Добавление нового объявления</q-toolbar-title>
-                    <q-btn
-                        color="secondary"
-                        label="Сохранить данные"
-                        @click="sendAd"/>
+                    <div class="new-ad__toolbar-title">
+                        Добавление нового объявления
+                    </div>
                 </q-toolbar>
             </q-header>
             <q-page-container>
-                <q-page class="q-pa-md">
-                    <div class="q-pa-md q-pt-lg" style="max-width: 1000px">
-                        <q-input v-model="AdData.name" label="Заголовок" class="q-mb-lg"/>
+                <q-page class="q-pa-lg">
+                    <div class="new-ad__action-panel">
+                        <div
+                            class="new-ad__save-button"
+                            :class="{'new-ad__save-button--disabled': !disableSaveBtn }"
+                            @click="sendAd"
+                        >
+                            Сохранить данные
+                        </div>
+                    </div>
+                    <div class="q-pt-lg" style="max-width: 1000px">
+                        <q-input v-model="AdData.name" label="Заголовок" class="new-ad__input q-mb-lg"/>
                         
                         <div class="q-mb-lg">
                             <p class="text">Описание</p>
@@ -54,7 +61,7 @@
 </template>
 
 <script>
-import { reactive } from 'vue';
+import { ref, reactive, watch } from 'vue';
 import gql from 'graphql-tag';
 import { useMutation } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
@@ -62,85 +69,107 @@ import { DateTime } from "luxon";
 import Editor from '@tinymce/tinymce-vue';
 
 export default {
-  components:{
-    Editor,
-  },
-  setup () {
-    let now = DateTime.now().toString();
-    let createDate = DateTime.fromISO(now, { locale: "ru" });
-    const router = useRouter();
-    const AdData = reactive({
-        name: '',
-        theme: '',
-        date: ''
-    });
-    const tinymceScriptSrc = '/plugins/tinymce/tinymce.min.js';
-    const plugins = [
-        "paste",
-        "accordion",
-        "advlist",
-        "anchor",
-        "autolink",
-        "autoresize",
-        "charmap",
-        "code",
-        "codesample",
-        "directionality",
-        "emoticons",
-        "fullscreen",
-        "help",
-        "image",
-        "importcss",
-        "insertdatetime",
-        "link",
-        "lists",
-        "media",
-        "nonbreaking",
-        "pagebreak",
-        "preview",
-        "quickbars",
-        "save",
-        "searchreplace",
-        "table",
-        "visualblocks",
-        "visualchars",
-        "wordcount",
-    ];
-    const { mutate: sendAd, onDone } = useMutation(gql`
-        mutation createNewAd(
-            $name: String!,
-            $theme: String!,
-            $date: String!,
-        ){
-            createAds(createAdInput: { 
-                name: $name,
-                theme: $theme,
-                date: $date,
-            }) {
-                    id
-                    name
-                    theme
-                    date
-                }
-            }
-        `, () => ({
-                variables: {
-                    name: AdData.name,
-                    theme: AdData.theme,
-                    date: createDate.toFormat("dd MMMM yyyy hh:mm"),
-                },
-            })
-    );
-
-    async function fileUpload(blobInfo) {
-        console.log('blobInfo', blobInfo);
-    }
-
-    onDone(() => {
-        router.push({
-            name: "ads",
+    components:{
+        Editor,
+    },
+    setup () {
+        let now = DateTime.now().toString();
+        let createDate = DateTime.fromISO(now, { locale: "ru" });
+        const router = useRouter();
+        const AdData = ref({
+            name: '',
+            theme: '',
+            date: ''
         });
-    })
+        const AdDataLock = ref({
+            name: '',
+            theme: '',
+            date: ''
+        });
+        const disableSaveBtn = ref(false);
+        const tinymceScriptSrc = '/plugins/tinymce/tinymce.min.js';
+        const plugins = [
+            "paste",
+            "accordion",
+            "advlist",
+            "anchor",
+            "autolink",
+            "autoresize",
+            "charmap",
+            "code",
+            "codesample",
+            "directionality",
+            "emoticons",
+            "fullscreen",
+            "help",
+            "image",
+            "importcss",
+            "insertdatetime",
+            "link",
+            "lists",
+            "media",
+            "nonbreaking",
+            "pagebreak",
+            "preview",
+            "quickbars",
+            "save",
+            "searchreplace",
+            "table",
+            "visualblocks",
+            "visualchars",
+            "wordcount",
+        ];
+        const { mutate: sendAd, onDone } = useMutation(gql`
+            mutation createNewAd(
+                $name: String!,
+                $theme: String!,
+                $date: String!,
+            ){
+                createAds(createAdInput: { 
+                    name: $name,
+                    theme: $theme,
+                    date: $date,
+                }) {
+                        id
+                        name
+                        theme
+                        date
+                    }
+                }
+            `, () => ({
+                    variables: {
+                        name: AdData.value.name,
+                        theme: AdData.value.theme,
+                        date: createDate.toFormat("dd MMMM yyyy hh:mm"),
+                    },
+                })
+        );
+
+        async function fileUpload(blobInfo) {
+            console.log('blobInfo', blobInfo);
+        }
+
+        onDone(() => {
+            router.push({
+                name: "ads",
+            });
+        })
+
+        watch(
+            () => AdData.value,
+            (v) => {
+
+                if(JSON.stringify(v) !== JSON.stringify(AdDataLock.value)) {
+                    disableSaveBtn.value = true;
+                } else {
+                    disableSaveBtn.value = false;
+                }
+            },
+            {
+                deep: true,
+            }
+        );
+
         return {
             sendAd,
             AdData,
@@ -150,7 +179,71 @@ export default {
             tinymceScriptSrc,
             plugins,
             fileUpload,
+            disableSaveBtn,
+            AdDataLock,
         }
     },
 }
 </script>
+
+<style scoped lang="scss">
+.new-ad {
+    &__input {
+        margin-bottom: 24px;
+        &--readonly {
+            opacity: .5;
+        }
+    }
+
+    &__action-panel {
+        @media screen and (min-width: 768px) {
+            display: flex;
+            align-items: center;
+        }
+    }
+
+    &__save-button {
+        display: inline-block;
+        padding: 12px;
+        border: 3px solid #3794ae;
+        background: #f0f9ff;
+        border-radius: 8px;
+        margin-bottom: 16px;
+        margin-right: 12px;
+
+        &--disabled {
+            opacity: .5;
+            cursor: pointer;
+        }
+
+        @media screen and (min-width: 768px) {
+            cursor: pointer;
+        }
+    }
+
+    &__toolbar-title {
+        font-size: 18px;
+    }
+
+    &__toolbar-link {
+        color: #006689;
+        text-decoration: none;
+
+        @media screen and (min-width: 768px) {
+            cursor: pointer;
+        }
+
+        &:visited {
+            color: #006689;
+        }
+    }
+
+    :deep(.q-field__native, .q-field__prefix, .q-field__suffix, .q-field__input) {
+        font-size: 16px !important;
+    }
+
+    :deep(.q-field__label) {
+        top: 15px !important;
+    }
+}
+</style>

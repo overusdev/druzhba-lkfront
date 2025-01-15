@@ -75,6 +75,7 @@
             text="После подтверждения действия, данные будут безвозвратно удалены.
                     Действительно удалить объявление?"
             @update:modelValue="removeAd"
+            @close="showRemovePopup = false"
         />
     </div>
 </template>

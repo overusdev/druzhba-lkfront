@@ -247,5 +247,13 @@ export default {
             color: #006689;
         }
     }
+
+    :deep(.q-field__native, .q-field__prefix, .q-field__suffix, .q-field__input) {
+        font-size: 16px !important;
+    }
+
+    :deep(.q-field__label) {
+        top: 15px !important;
+    }
 }
 </style>

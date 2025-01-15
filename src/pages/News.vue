@@ -71,19 +71,26 @@
                 </q-page>
             </q-page-container>
         </q-layout>
-        <q-dialog v-model="showRemovePopup">
-            <q-card class="news__dialog">
-                <q-card-section class="q-pt-xl">
-                    <p class="text text-red">Действительно удалить новость?</p>
-                    <q-btn flat no-caps icon="close" class="news__close-icon" v-close-popup />
-                    <q-btn
-                        color="red"
-                        icon="delete"
-                        label="Да, удалить"
-                        @click="removeNews"/>
-                </q-card-section>
-            </q-card>
-        </q-dialog>
+        <ConfirmDialog
+            v-model="showRemovePopup"
+            text="После подтверждения действия, данные будут безвозвратно удалены.
+                    Действительно удалить все данные по новости?"
+            @update:modelValue="removeNews"
+            @close="showRemovePopup = false"
+        />
+                <!-- <q-dialog v-model="showRemovePopup">
+                    <q-card class="news__dialog">
+                        <q-card-section class="q-pt-xl">
+                            <p class="text text-red">Действительно удалить новость?</p>
+                            <q-btn flat no-caps icon="close" class="news__close-icon" v-close-popup />
+                            <q-btn
+                                color="red"
+                                icon="delete"
+                                label="Да, удалить"
+                                @click="removeNews"/>
+                        </q-card-section>
+                    </q-card>
+                </q-dialog> -->
     </div>
 </template>
 
@@ -93,10 +100,12 @@ import gql from 'graphql-tag';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useGeometryStore } from '../stores/geometry';
 import ToolbarNote from '../components/ToolbarNote.vue';
+import ConfirmDialog from '../components/ConfirmDialog.vue';
 
 export default {
   components:{
     ToolbarNote,
+    ConfirmDialog,
   },
   setup () {
     const disableRemoveButton = ref(true);
