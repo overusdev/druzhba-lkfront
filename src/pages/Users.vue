@@ -48,9 +48,7 @@
                                     :props="props"
                                 >
                                     <template v-if="col.name === 'isAdmin'">
-                                        <q-badge v-if="col.value === 'Админ'" color="pink-5">
-                                            <span class="userd__isadmin-marked">{{ col.value }}</span>
-                                        </q-badge>
+                                        <span v-if="col.value === 'Админ'" class="userd__isadmin-marked">{{ col.value }}</span>
                                         <span v-else>-</span>
                                     </template>
 
@@ -300,7 +298,10 @@ export default {
     }
     :deep(.q-table .userd__isadmin-marked) {
         font-size: 14px;
-        padding: 2px 4px;
+        padding: 1px 12px;
+        color: #bf4646;
+        border: 1px solid;
+        border-radius: 4px;
     }
 }
 </style>

@@ -17,7 +17,12 @@
                 <q-page class="q-pa-md">
                     <div class="q-pa-md q-pt-lg" style="max-width: 1000px">                        
                         <div class="q-mb-lg">
-                            <p class="text">Описание</p>
+                            <NoteBlock
+                                msg='Внимание! Допустимый фомат фалов при вложении - JPEG или JPG,
+                                общим размером не более 1mb. <br>
+                                При прикреплении изображения рекомендуется его "стянуть/сжать" курсором мыши до минимального размера'
+                                type="warning"
+                            />
                             <Editor
                                 api-key="no-api-key"
                                 :tinymce-script-src="tinymceScriptSrc"
@@ -58,10 +63,12 @@ import { useMutation } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
 import { DateTime } from "luxon";
 import Editor from '@tinymce/tinymce-vue';
+import NoteBlock from '../components/NoteBlock.vue';
 
 export default {
   components:{
     Editor,
+    NoteBlock,
   },
   setup () {
     let now = DateTime.now().toString();

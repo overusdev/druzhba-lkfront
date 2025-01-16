@@ -35,6 +35,13 @@
                             class="user__input q-mb-lg"
                         />
                         <div class="q-mb-lg">
+                            <p class="text">Описание</p>
+                            <NoteBlock
+                                msg='Внимание! Допустимый фомат фалов при вложении - JPEG или JPG,
+                                общим размером не более 1mb. <br>
+                                При прикреплении изображения рекомендуется его "стянуть/сжать" курсором мыши до минимального размера'
+                                type="warning"
+                            />
                             <Editor
                                 api-key="no-api-key"
                                 :tinymce-script-src="tinymceScriptSrc"
@@ -72,19 +79,6 @@
             @update:modelValue="removeDoc"
             @close="showRemovePopup = false"
         />
-        <!-- <q-dialog v-model="showRemovePopup">
-            <q-card class="edit-doc__dialog">
-                <q-card-section class="q-pt-xl">
-                    <p class="text text-red">Действительно удалить все данные по документу? </p>
-                    <q-btn flat no-caps icon="close" class="edit-doc__close-icon" v-close-popup />
-                    <q-btn
-                        color="red"
-                        icon="delete"
-                        label="Да, удалить"
-                        @click="removeDoc"/>
-                </q-card-section>
-            </q-card>
-        </q-dialog> -->
     </div>
 </template>
 
@@ -97,11 +91,13 @@ import { useRoute } from "vue-router";
 import { DateTime } from "luxon";
 import Editor from '@tinymce/tinymce-vue';
 import ConfirmDialog from '../components/ConfirmDialog.vue';
+import NoteBlock from '../components/NoteBlock.vue';
 
 export default {
     components:{
         Editor,
         ConfirmDialog,
+        NoteBlock,
     },
     setup () {
         const disableEditButton = ref(true);

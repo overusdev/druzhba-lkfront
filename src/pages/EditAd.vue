@@ -27,6 +27,13 @@
                         <q-input v-model="adData.name" label="Заголовок" class="q-mb-lg" />
 
                         <div class="q-mb-lg">
+                            <p class="text">Описание</p>
+                            <NoteBlock
+                                msg='Внимание! Допустимый фомат фалов при вложении - JPEG или JPG,
+                                общим размером не более 1mb. <br>
+                                При прикреплении изображения рекомендуется его "стянуть/сжать" курсором мыши до минимального размера'
+                                type="warning"
+                            />
                             <Editor api-key="no-api-key" :tinymce-script-src="tinymceScriptSrc" v-model="adData.theme"
                                 :init="{
                                     toolbar_mode: 'sliding',
@@ -63,10 +70,12 @@ import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
 import Editor from '@tinymce/tinymce-vue';
 import { DateTime } from "luxon";
+import NoteBlock from '../components/NoteBlock.vue';
 
 export default {
     components: {
         Editor,
+        NoteBlock,
     },
     setup() {
         const router = useRouter();

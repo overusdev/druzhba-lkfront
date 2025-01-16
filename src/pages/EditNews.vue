@@ -36,6 +36,13 @@
                     <div class="q-pt-lg" style="max-width: 1000px">
                         <q-input v-model="newsData.name" label="Заголовок" class="edit-new__input q-mb-lg"/>
                         <div class="q-mb-lg">
+                            <p class="text">Описание</p>
+                            <NoteBlock
+                                msg='Внимание! Допустимый фомат фалов при вложении - JPEG или JPG,
+                                общим размером не более 1mb. <br>
+                                При прикреплении изображения рекомендуется его "стянуть/сжать" курсором мыши до минимального размера'
+                                type="warning"
+                            />
                             <Editor
                                 api-key="no-api-key"
                                 :tinymce-script-src="tinymceScriptSrc"
@@ -73,19 +80,6 @@
             @update:modelValue="removeNews"
             @close="showRemovePopup = false"
         />
-        <!-- <q-dialog v-model="showRemovePopup">
-            <q-card class="news__dialog">
-                <q-card-section class="q-pt-xl">
-                    <p class="text text-red">Действительно удалить все данные по новости?</p>
-                    <q-btn flat no-caps icon="close" class="news__close-icon" v-close-popup />
-                    <q-btn
-                        color="red"
-                        icon="delete"
-                        label="Да, удалить"
-                        @click="removeNews"/>
-                </q-card-section>
-            </q-card>
-        </q-dialog> -->
     </div>
 </template>
 
@@ -98,11 +92,13 @@ import { useRoute } from "vue-router";
 import { DateTime } from "luxon";
 import Editor from '@tinymce/tinymce-vue';
 import ConfirmDialog from '../components/ConfirmDialog.vue';
+import NoteBlock from '../components/NoteBlock.vue';
 
 export default {
     components:{
         Editor,
         ConfirmDialog,
+        NoteBlock,
     },
     setup () {
         const disableEditButton = ref(true);

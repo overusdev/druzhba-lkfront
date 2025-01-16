@@ -32,6 +32,12 @@
                     </div>
                     <div class="q-pt-lg" style="max-width: 1000px">
                         <div class="q-mb-lg">
+                            <NoteBlock
+                                msg='Внимание! Допустимый фомат фалов при вложении - JPEG или JPG,
+                                общим размером не более 1mb. <br>
+                                При прикреплении изображения рекомендуется его "стянуть/сжать" курсором мыши до минимального размера'
+                                type="warning"
+                            />
                             <Editor
                                 api-key="no-api-key"
                                 :tinymce-script-src="tinymceScriptSrc"
@@ -67,10 +73,12 @@ import { useQuery, useMutation } from "@vue/apollo-composable";
 import { useRouter } from "vue-router";
 import { useRoute } from "vue-router";
 import Editor from '@tinymce/tinymce-vue';
+import NoteBlock from '../components/NoteBlock.vue';
 
 export default {
     components:{
         Editor,
+        NoteBlock,
     },
     setup () {
         let now = DateTime.now().toString();
