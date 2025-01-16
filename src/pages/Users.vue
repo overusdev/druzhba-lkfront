@@ -23,11 +23,40 @@
             </q-header>
             <q-page-container>
                 <q-page class="q-pa-md">
-                    <q-table :rows="users" :columns="columns" row-key="name" selection="single"
-                        v-model:selected="usersGroup" :separator="separator" :loading="loading"
-                        no-data-label="Участков не найдено" hide-pagination hide-selected-banner>
+                    <q-table
+                        :rows="users"
+                        :columns="columns"
+                        row-key="name"
+                        selection="single"
+                        v-model:selected="usersGroup"
+                        :separator="separator"
+                        :loading="loading"
+                        no-data-label="Участков не найдено"
+                        hide-pagination hide-selected-banner
+                    >
                         <template v-if="usersGroup.length" v-slot:bottom>
                             Выбран участок {{ usersGroup[0].area }}
+                        </template>
+                        <template v-slot:body="props">
+                            <q-tr :props="props" @click="props.selected = true">
+                                <q-td>
+                                    <q-checkbox v-model="props.selected" color="primary" />
+                                </q-td>
+                                <q-td
+                                    v-for="col in props.cols"
+                                    :key="col.name"
+                                    :props="props"
+                                >
+                                    <template v-if="col.name === 'isAdmin'">
+                                        <q-badge v-if="col.value === 'Админ'" color="pink-5">
+                                            <span class="userd__isadmin-marked">{{ col.value }}</span>
+                                        </q-badge>
+                                        <span v-else>-</span>
+                                    </template>
+
+                                    <span v-else>{{ col.value }}</span>
+                                </q-td>
+                            </q-tr>
                         </template>
                     </q-table>
                 </q-page>
@@ -66,6 +95,15 @@ export default {
                 align: 'left',
                 field: row => row.area,
                 format: val => `${val}`,
+                sortable: true
+            },
+            {
+                name: 'isAdmin',
+                required: true,
+                label: 'Статус',
+                align: 'left',
+                field: row => row.isAdmin,
+                format: val => val ? `Админ` : '-',
                 sortable: true
             },
             {
@@ -146,6 +184,7 @@ export default {
                 phone
                 date
                 updated
+                isAdmin
             }
         }
     `;
@@ -258,6 +297,10 @@ export default {
 
     :deep(.q-table th.sortable) {
         font-size: 16px;
+    }
+    :deep(.q-table .userd__isadmin-marked) {
+        font-size: 14px;
+        padding: 2px 4px;
     }
 }
 </style>
