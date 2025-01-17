@@ -73,7 +73,7 @@
                 :class="{'sidebar__item--active': route.path === '/contacts-create'}"
               >
                 <q-item-section avatar>
-                    <q-icon name="location_on" color="black"/>
+                    <q-icon name="location_on" color="grey"/>
                 </q-item-section>
 
                 <div class="sidebar__item-text">
@@ -88,7 +88,7 @@
                 :class="{'sidebar__item--active': route.path === '/contacts-update'}"
               >
                 <q-item-section avatar>
-                  <q-icon name="location_on" color="black"/>
+                  <q-icon name="location_on" color="teal-7"/>
                 </q-item-section>
 
                 <div class="sidebar__item-text">
