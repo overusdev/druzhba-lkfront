@@ -14,20 +14,30 @@
                             text-color="black"
                             icon="add"
                             :label="!store.isMobile ? 'Добавить новость' : ''"
+                            class="b-button"
                         />
                     </router-link>
                     <router-link :to="`/edit-news/${ newsGroup.length ? newsGroup[0].id : null}`">
                         <q-btn
-                            class="q-ml-sm"
+                            class="b-button"
                             color="white"
                             icon="edit"
                             text-color="black"
                             :label="!store.isMobile ? 'Редактировать' : ''"
                             :disable="disableEditButton"
-                        />
+                        >
+                        <q-tooltip
+                            v-if="disableEditButton"
+                            v-model="showingEditTooltip"
+                            anchor="bottom left" self="top middle"
+                            class="bg-grey-1 text-subtitle1 text-black shadow-4"
+                            :offset="[10, 10]"
+                        >Удалять можно только выбранный элемент
+                        </q-tooltip>
+                        </q-btn>
                     </router-link>
                     <q-btn
-                        class="q-ml-sm"
+                        class="b-button"
                         color="red-10"
                         icon="delete"
                         :label="!store.isMobile ? 'Удалить выбранную' : ''"
@@ -100,6 +110,7 @@ export default {
     const showRemovePopup = ref(false);
     const store = useGeometryStore();
     const showingRemoveTooltip = ref(false);
+    const showingEditTooltip = ref(false);
     const columns = [
         {
             name: 'name',
@@ -216,6 +227,7 @@ export default {
             upplyRemoveNews,
             store,
             showingRemoveTooltip,
+            showingEditTooltip,
         }
     },
 }
@@ -223,7 +235,6 @@ export default {
 
 <style scoped lang="scss">
 .news {
-
     &__toolbar-title {
         flex: 1 1 0%;
         min-width: 1px;
@@ -249,5 +260,11 @@ export default {
     :deep(.q-table th.sortable) {
         font-size: 16px;
     }
+}
+
+.b-button {
+  padding: 13px 16px !important;
+  border-radius: 6px !important;
+  margin: 12px 0 12px 12px;
 }
 </style>

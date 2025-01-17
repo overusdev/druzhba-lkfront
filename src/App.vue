@@ -329,6 +329,9 @@ onMounted(async () => {
         .sidebar__item-text {
           opacity: 1;
         }
+        .sidebar__count {
+          opacity: .4;
+        }
       }
     }
 
@@ -337,6 +340,15 @@ onMounted(async () => {
 
       .sidebar__item-text {
         opacity: 1;
+      }
+      @media screen and (min-width: 768px) {
+        &:hover {
+          filter: none;
+
+          .sidebar__count {
+            opacity: 1;
+          }
+        }
       }
     }
   }
@@ -371,6 +383,7 @@ onMounted(async () => {
     border-radius: 4px;
     background: #13abb2;
     color: #fff;
+    transition: all .2s ease-in-out;
   }
 }
 .no-access {

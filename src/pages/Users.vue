@@ -5,14 +5,29 @@
                 <q-toolbar>
                     <span class="users__toolbar-title">Общее количество участков: {{ users.length }}</span>
                     <router-link to="/add-user">
-                        <q-btn color="white" text-color="black" icon="add" label="Добавить нового" />
+                        <q-btn color="white" text-color="black" icon="add" label="Добавить нового" class="b-button" />
                     </router-link>
                     <router-link :to="`/edit-user/${usersGroup.length ? usersGroup[0].id : null}`">
-                        <q-btn class="q-ml-sm" color="white" icon="edit" text-color="black" label="Редактировать"
-                            :disable="disableEditButton" />
+                        <q-btn
+                            class="b-button"
+                            color="white"
+                            icon="edit"
+                            text-color="black"
+                            label="Редактировать"
+                            :disable="disableEditButton">
+                            <q-tooltip v-if="disableEditButton" v-model="showingEditTooltip" anchor="bottom left"
+                                self="top middle" class="bg-grey-1 text-subtitle1 text-black shadow-4"
+                                :offset="[10, 10]">Редактировать можно только выбранный элемент
+                            </q-tooltip>
+                    </q-btn>
                     </router-link>
-                    <q-btn class="q-ml-sm" color="red-10" icon="delete" label="Удалить выбранного"
-                        :disable="disableRemoveButton" @click="upplyRemoveUsers">
+                    <q-btn
+                        class="b-button"
+                        color="red-10"
+                        icon="delete"
+                        label="Удалить выбранного"
+                        :disable="disableRemoveButton" @click="upplyRemoveUsers"
+                    >
                         <q-tooltip v-if="disableRemoveButton" v-model="showingRemoveTooltip" anchor="bottom left"
                             self="top middle" class="bg-grey-1 text-subtitle1 text-black shadow-4"
                             :offset="[10, 10]">Удалять можно только выбранный элемент
@@ -84,6 +99,7 @@ export default {
         const disableEditButton = ref(true);
         const showRemovePopup = ref(false);
         const showingRemoveTooltip = ref(false);
+        const showingEditTooltip = ref(false);
         const columns = [
             {
                 name: 'area',
@@ -253,6 +269,7 @@ export default {
             showRemovePopup,
             upplyRemoveUsers,
             showingRemoveTooltip,
+            showingEditTooltip,
         }
     },
 }
@@ -309,5 +326,11 @@ export default {
         border: 1px solid;
         border-radius: 4px;
     }
+}
+
+.b-button {
+  padding: 13px 16px !important;
+  border-radius: 6px !important;
+  margin: 12px 0 12px 12px;
 }
 </style>
