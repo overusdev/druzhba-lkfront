@@ -7,7 +7,7 @@
             class="shadow-2 rounded-borders">
             <q-header bordered class="bg-white text-black">
                 <q-toolbar>
-                    <q-toolbar-title>Список новостей <span class="text-weight-bold">всего: {{ news.length }}</span></q-toolbar-title>
+                    <span class="news__toolbar-title">Общее количество новостей: {{ news.length }}</span>
                     <router-link to="/add-news">
                         <q-btn
                             color="white"
@@ -223,6 +223,13 @@ export default {
 
 <style scoped lang="scss">
 .news {
+
+    &__toolbar-title {
+        flex: 1 1 0%;
+        min-width: 1px;
+        max-width: 100%;
+        font-size: 16px;
+    }
     &__dialog {
         position: relative;
     }

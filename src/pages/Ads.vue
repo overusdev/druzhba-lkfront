@@ -7,7 +7,7 @@
             class="shadow-2 rounded-borders">
             <q-header bordered class="bg-white text-black">
                 <q-toolbar>
-                    <q-toolbar-title>Список объявлений <span class="text-weight-bold">всего: {{ ads.length }}</span></q-toolbar-title>
+                    <span class="ads__toolbar-title">Общее количество объявлений: {{ ads.length }}</span>
                     <router-link to="/add-ad">
                         <q-btn
                             color="white"
@@ -220,6 +220,13 @@ export default {
 
 <style scoped lang="scss">
 .ads {
+
+    &__toolbar-title {
+        flex: 1 1 0%;
+        min-width: 1px;
+        max-width: 100%;
+        font-size: 16px;
+    }
     &__dialog {
         position: relative;
     }

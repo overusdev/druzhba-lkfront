@@ -3,8 +3,7 @@
         <q-layout view="lHh lpr lFf" container style="min-height: 800px" class="shadow-2 rounded-borders">
             <q-header bordered class="bg-white text-black">
                 <q-toolbar>
-                    <q-toolbar-title>Список участков <span class="text-weight-bold">всего: {{ users.length
-                            }}</span></q-toolbar-title>
+                    <span class="users__toolbar-title">Общее количество участков: {{ users.length }}</span>
                     <router-link to="/add-user">
                         <q-btn color="white" text-color="black" icon="add" label="Добавить нового" />
                     </router-link>
@@ -172,20 +171,20 @@ export default {
         const usersGroup = ref([]);
         const usersIds = ref([]);
         const USERS = gql`
-        query findAll($take: Int!) {
-            users(take: $take) {
-                id
-                name
-                surname
-                patronymic
-                area
-                phone
-                date
-                updated
-                isAdmin
+            query findAll($take: Int!) {
+                users(take: $take) {
+                    id
+                    name
+                    surname
+                    patronymic
+                    area
+                    phone
+                    date
+                    updated
+                    isAdmin
+                }
             }
-        }
-    `;
+        `;
         const { result, loading, error, refetch } = useQuery(USERS, () => ({
             take: 500,
             name: userData.value.name,
@@ -194,16 +193,16 @@ export default {
         const users = computed(() => result.value?.users ?? []);
         const options = computed(() => users.value);
         const { mutate: removeUsers, onDone: onDoneremoveUsers } = useMutation(gql`
-        mutation removeAll($ids: [Int!]!){
-            removeUsers(ids: $ids) {
-                id
+            mutation removeAll($ids: [Int!]!){
+                removeUsers(ids: $ids) {
+                    id
+                }
             }
-        }
-        `, () => ({
-            variables: {
-                ids: usersGroup.value.map(i => i.id)
-            },
-        })
+            `, () => ({
+                variables: {
+                    ids: usersGroup.value.map(i => i.id)
+                },
+            })
         );
 
         function upplyRemoveUsers() {
@@ -261,6 +260,13 @@ export default {
 
 <style scoped lang="scss">
 .users {
+
+    &__toolbar-title {
+        flex: 1 1 0%;
+        min-width: 1px;
+        max-width: 100%;
+        font-size: 16px;
+    }
     &__dialog {
         position: relative;
         border-radius: 8px;

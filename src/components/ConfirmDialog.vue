@@ -27,6 +27,7 @@ import { ref, computed, defineProps, defineEmits } from 'vue';
 
 const props = defineProps({
     modelValue: Boolean,
+    modelValue: Boolean,
     text: String,
 });
 const emit = defineEmits(['update:modelValue', 'close']);

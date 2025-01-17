@@ -20,98 +20,114 @@
         :width="drawerWidth"
         :breakpoint="400"
         class="sidebar"
-      >
+      > 
         <q-scroll-area style="height: calc(100% - 150px); margin-top: 150px; border-right: 1px solid #ddd">
           <q-list padding>
             <router-link to="/users" class="router-link">
-              <q-item clickable v-ripple>
+              <div
+                class="sidebar__item"
+                :class="{'sidebar__item--active': route.path === '/users'}"
+              >
                 <q-item-section avatar>
                 <q-icon name="people" color="blue" />
                 </q-item-section>
-
-                <q-item-section class="sidebar__item-text">
-                  Участки
-                </q-item-section>
-              </q-item>
+                <div class="sidebar__item-text">
+                  Участки <span v-if="areasCount" class="sidebar__count">{{ areasCount }}</span>
+                </div>
+              </div>
             </router-link>
 
             <router-link to="/news" class="router-link">
-              <q-item clickable v-ripple>
+              <div
+                class="sidebar__item"
+                :class="{'sidebar__item--active': route.path === '/news'}"
+              >
                 <q-item-section avatar>
-                <q-icon name="newspaper" color="orange" />
+                  <q-icon name="newspaper" color="orange" />
                 </q-item-section>
 
-                <q-item-section class="sidebar__item-text">
-                  Новости
-                </q-item-section>
-              </q-item>
+                <div class="sidebar__item-text">
+                  Новости <span v-if="newsCount" class="sidebar__count">{{ newsCount }}</span>
+                </div>
+              </div>
             </router-link>
 
             <router-link to="/ads" class="router-link">
-              <q-item clickable v-ripple>
+              <div
+                class="sidebar__item"
+                :class="{'sidebar__item--active': route.path === '/ads'}"
+              >
                 <q-item-section avatar>
                 <q-icon name="description" color="green"/>
                 </q-item-section>
 
-                <q-item-section class="sidebar__item-text">
-                  Объявления
-                </q-item-section>
-              </q-item>
+                <div class="sidebar__item-text">
+                  Объявления <span v-if="adsCount" class="sidebar__count">{{ adsCount }}</span>
+                </div>
+              </div>
             </router-link>
 
             <router-link to="/contacts-create" class="router-link disabled">
-              <q-item clickable v-ripple>
+              <div
+                class="sidebar__item"
+                :class="{'sidebar__item--active': route.path === '/contacts-create'}"
+              >
                 <q-item-section avatar>
-                <q-icon name="location_on" color="black"/>
+                    <q-icon name="location_on" color="black"/>
                 </q-item-section>
 
-                <q-item-section class="sidebar__item-text">
+                <div class="sidebar__item-text">
                   Контакты
-                </q-item-section>
-              </q-item>
+                </div>
+              </div>
             </router-link>
 
             <router-link to="/contacts-update" class="router-link">
-              <q-item clickable v-ripple>
+              <div
+                class="sidebar__item"
+                :class="{'sidebar__item--active': route.path === '/contacts-update'}"
+              >
                 <q-item-section avatar>
-                <q-icon name="location_on" color="black"/>
+                  <q-icon name="location_on" color="black"/>
                 </q-item-section>
 
-                <q-item-section class="sidebar__item-text">
+                <div class="sidebar__item-text">
                   Контакты редактировать
-                </q-item-section>
-              </q-item>
+                </div>
+              </div>
             </router-link>
 
             <router-link to="/docs" class="router-link">
-              <q-item clickable v-ripple>
+              <div
+                class="sidebar__item"
+                :class="{'sidebar__item--active': route.path === '/docs'}"
+              >
                 <q-item-section avatar>
-                <q-icon name="file_open" color="blue"/>
+                  <q-icon name="file_open" color="blue"/>
                 </q-item-section>
 
-                <q-item-section class="sidebar__item-text">
-                  Документы
-                </q-item-section>
-              </q-item>
+                <div class="sidebar__item-text">
+                  Документы <span v-if="docsCount" class="sidebar__count">{{ docsCount }}</span>
+                </div>
+              </div>
             </router-link>
-
-            <q-item clickable v-ripple>
+            <div
+              class="sidebar__item"
+            >
               <q-item-section avatar>
                 <q-icon name="logout" color="red"/>
               </q-item-section>
 
-              <q-item-section class="sidebar__item-text" @click="logOut">
+              <div class="sidebar__item-text" @click="logOut">
                 Выйти
-              </q-item-section>
-            </q-item>
+              </div>
+            </div>
           </q-list>
         </q-scroll-area>
 
         <q-img class="absolute-top" src="https://cdn.quasar.dev/img/material.png" style="height: 150px">
           <div class="absolute-bottom bg-transparent">
             <q-avatar size="56px" class="q-mb-sm">
-              <!-- <img v-if="authStore.adminData.name === 'Сергей'" src="https://cdn.quasar.dev/img/boy-avatar.png">
-              <AdminGirl class="sidebar__admin-icon"/> -->
               <component :is="components[currentSheet]" class="sidebar__admin-icon"/>
             </q-avatar>
             <div v-if="authStore.adminData.name" class="text-weight-bold">{{ authStore.adminData.name }}</div>
@@ -128,9 +144,20 @@
 </template>
 
 <script setup>
-import { ref, computed, reactive, onMounted } from 'vue';
+import {
+  ref, 
+  computed, 
+  reactive, 
+  onMounted, 
+  onBeforeMount, 
+  watch
+} from 'vue';
+import gql from 'graphql-tag';
+import apolloClients from "./modules/apollo.setup";
+import { provideApolloClient, useQuery } from "@vue/apollo-composable";
 import { useGeometryStore } from './stores/geometry';
 import { useAuthStore } from './stores/auth';
+import { useRoute } from "vue-router";
 import AdminGirl from './components/icons/admin-girl.vue';
 import AdminBoy from './components/icons/AdminBoy.vue';
 
@@ -141,54 +168,209 @@ const components = {
 const currentSheet = computed(() => authStore.adminData.name === 'Сергей' ? 'AdminBoy' : 'AdminGirl');
 const drawer = ref(false);
 const loading = ref(false);
+const areasCount = ref(0);
+const newsCount = ref(0);
+const adsCount = ref(0);
+const docsCount = ref(0);
 const store = useGeometryStore();
 const authStore = useAuthStore();
 const drawerWidth = computed(() => store.isMobile ? 300 : 400);
 const domainAuth = import.meta.env.MODE === 'production'
   ? 'https://auth.druzba-nn.ru'
   : 'http://localhost:8004/';
+const route = useRoute();
+
 
 function logOut() {
   loading.value = true;
   authStore.logOut('dr_access_token');
 }
 
-onMounted(async () => {
+async function checkTokenExpires(tokenExpires) {
+    let date = new Date(Date.now());
+    let dateNow = date.getTime() / 1000;
 
+    // console.log(tokenExpires);
+    // console.log(date.getTime() / 1000);
+
+    if(dateNow > tokenExpires) {
+        window.location.replace(domainAuth);
+        return console.log('Oh, I accidentally fell...(((');
+    }
+}
+
+async function getUsersCount() {
+    provideApolloClient(apolloClients.default);
+    const result = useQuery(
+      gql`
+        query findAllCount {
+            usersCount
+        }
+      `,
+    );
+
+    return new Promise((resolve, reject) => {
+      result.onResult(() => {
+        resolve(result.result.value.usersCount || []);
+        areasCount.value =
+          result.result.value?.usersCount;
+      });
+      result.onError(() => {
+        reject();
+      });
+    });
+}
+
+async function getNewsCount() {
+    provideApolloClient(apolloClients.default);
+    const result = useQuery(
+      gql`
+        query findAllCount {
+            newsCount
+        }
+      `,
+    );
+
+    return new Promise((resolve, reject) => {
+      result.onResult(() => {
+        resolve(result.result.value.newsCount || []);
+        newsCount.value =
+          result.result.value?.newsCount;
+      });
+      result.onError(() => {
+        reject();
+      });
+    });
+}
+
+async function getDocsCount() {
+    provideApolloClient(apolloClients.default);
+    const result = useQuery(
+      gql`
+        query findAllCount {
+            docsCount
+        }
+      `,
+    );
+
+    return new Promise((resolve, reject) => {
+      result.onResult(() => {
+        resolve(result.result.value.docsCount || []);
+        docsCount.value =
+          result.result.value?.docsCount;
+      });
+      result.onError(() => {
+        reject();
+      });
+    });
+}
+
+async function getAdsCount() {
+    provideApolloClient(apolloClients.default);
+    const result = useQuery(
+      gql`
+        query findAllCount {
+            adsCount
+        }
+      `,
+    );
+
+    return new Promise((resolve, reject) => {
+      result.onResult(() => {
+        resolve(result.result.value.adsCount || []);
+        adsCount.value =
+          result.result.value?.adsCount;
+      });
+      result.onError(() => {
+        reject();
+      });
+    });
+}
+
+setInterval(async() => {
+    await checkTokenExpires(authStore.parseJwt(authStore.getCookie('dr_access_token')).exp);
+}, 2000);
+
+onBeforeMount(async() => {
+    await getUsersCount();
+    await getNewsCount();
+    await getAdsCount();
+    await getDocsCount();
+})
+
+onMounted(async () => {
     authStore.adminData.name = authStore.parseJwt(authStore.getCookie('dr_access_token')).username;
     authStore.adminData.isAdmin = authStore.parseJwt(authStore.getCookie('dr_access_token')).isAdmin;
 
   if(!authStore.adminData.isAdmin) {
     authStore.logOut('dr_access_token');
   }
-
-  async function checkTokenExpires(tokenExpires) {
-    let date = new Date(Date.now());
-    let dateNow = date.getTime() / 1000;
-
-    console.log(tokenExpires);
-    console.log(date.getTime() / 1000);
-
-    if(dateNow > tokenExpires) {
-      window.location.replace(domainAuth);
-      return console.log('Oh, I accidentally fell...(((');
-    }
-  }
-  setInterval(async() => {
-    await checkTokenExpires(authStore.parseJwt(authStore.getCookie('dr_access_token')).exp);
-  }, 2000);
 });
 
 </script>
 <style scoped lang="scss">
 
 .sidebar {
+  &__item {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 48px;
+    padding: 8px 16px;
+    @media screen and (min-width: 768px) {
+      transition: all .2s ease-in-out;
+      filter: grayscale(1);
+      cursor: pointer;
+
+      &:hover {
+        filter: none;
+
+        .sidebar__item-text {
+          opacity: 1;
+        }
+      }
+    }
+
+    &--active {
+      filter: none;
+
+      .sidebar__item-text {
+        opacity: 1;
+      }
+    }
+  }
   &__admin-icon {
     width: 40px;
     height: 40px;
   }
   &__item-text {
+    position: relative;
     font-size: 16px;
+    display: flex;
+    flex: 10000 1 0%;
+    align-items: flex-start;
+    padding-right: 16px;
+    width: auto;
+    min-width: 0;
+    max-width: 100%;
+    @media screen and (min-width: 768px) {
+      opacity: .5;
+      transition: all .2s ease-in-out;
+    }
+  }
+  &__count {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    position: absolute;
+    right: 0;
+    padding: 4px 6px;
+    border-radius: 4px;
+    background: #13abb2;
+    color: #fff;
   }
 }
 .no-access {
