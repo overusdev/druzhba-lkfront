@@ -211,7 +211,7 @@ async function getUsersCount() {
 
     return new Promise((resolve, reject) => {
       result.onResult(() => {
-        resolve(result.result.value.usersCount || []);
+        resolve(result.result.value?.usersCount || 0);
         areasCount.value =
           result.result.value?.usersCount;
       });
@@ -233,7 +233,7 @@ async function getNewsCount() {
 
     return new Promise((resolve, reject) => {
       result.onResult(() => {
-        resolve(result.result.value.newsCount || []);
+        resolve(result.result.value?.newsCount || 0);
         newsCount.value =
           result.result.value?.newsCount;
       });
@@ -255,7 +255,7 @@ async function getDocsCount() {
 
     return new Promise((resolve, reject) => {
       result.onResult(() => {
-        resolve(result.result.value.docsCount || []);
+        resolve(result.result.value?.docsCount || 0);
         docsCount.value =
           result.result.value?.docsCount;
       });
@@ -277,7 +277,7 @@ async function getAdsCount() {
 
     return new Promise((resolve, reject) => {
       result.onResult(() => {
-        resolve(result.result.value.adsCount || []);
+        resolve(result.result.value?.adsCount || 0);
         adsCount.value =
           result.result.value?.adsCount;
       });
