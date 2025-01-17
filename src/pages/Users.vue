@@ -5,7 +5,13 @@
                 <q-toolbar>
                     <span class="users__toolbar-title">Общее количество участков: {{ users.length }}</span>
                     <router-link to="/add-user">
-                        <q-btn color="white" text-color="black" icon="add" label="Добавить нового" class="b-button" />
+                        <q-btn 
+                            color="white"
+                            text-color="black"
+                            icon="add"
+                            :label="!store.isMobile ? 'Добавить нового' : ''"
+                            class="b-button"
+                        />
                     </router-link>
                     <router-link :to="`/edit-user/${usersGroup.length ? usersGroup[0].id : null}`">
                         <q-btn
@@ -13,7 +19,7 @@
                             color="white"
                             icon="edit"
                             text-color="black"
-                            label="Редактировать"
+                            :label="!store.isMobile ? 'Редактировать' : ''"
                             :disable="disableEditButton">
                             <q-tooltip v-if="disableEditButton" v-model="showingEditTooltip" anchor="bottom left"
                                 self="top middle" class="bg-grey-1 text-subtitle1 text-black shadow-4"
@@ -25,7 +31,7 @@
                         class="b-button"
                         color="red-10"
                         icon="delete"
-                        label="Удалить выбранного"
+                        :label="!store.isMobile ? 'Удалить выбранного' : ''"
                         :disable="disableRemoveButton" @click="upplyRemoveUsers"
                     >
                         <q-tooltip v-if="disableRemoveButton" v-model="showingRemoveTooltip" anchor="bottom left"
@@ -87,6 +93,7 @@
 <script>
 import { ref, reactive, computed, onMounted, watch } from 'vue';
 import gql from 'graphql-tag';
+import { useGeometryStore } from '../stores/geometry';
 import { useQuery, useMutation } from "@vue/apollo-composable";
 import ConfirmDialog from '../components/ConfirmDialog.vue';
 
@@ -100,6 +107,7 @@ export default {
         const showRemovePopup = ref(false);
         const showingRemoveTooltip = ref(false);
         const showingEditTooltip = ref(false);
+        const store = useGeometryStore();
         const columns = [
             {
                 name: 'area',
@@ -268,6 +276,7 @@ export default {
             disableEditButton,
             showRemovePopup,
             upplyRemoveUsers,
+            store,
             showingRemoveTooltip,
             showingEditTooltip,
         }
