@@ -88,7 +88,7 @@
                 :class="{'sidebar__item--active': route.path === '/contacts-update'}"
               >
                 <q-item-section avatar>
-                  <q-icon name="location_on" color="teal-7"/>
+                  <q-icon name="location_on" color="teal-5"/>
                 </q-item-section>
 
                 <div class="sidebar__item-text">
