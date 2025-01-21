@@ -35,6 +35,7 @@
                     </div>
                     <div class="q-pt-lg" style="max-width: 1000px">
                         <q-input v-model="newsData.name" label="Заголовок" class="edit-new__input q-mb-lg"/>
+                        <q-input v-model="newsData.mainPageText" label="Текст для главной страницы" class="edit-new__input q-mb-lg"/>
                         <div class="q-mb-lg">
                             <p class="text">Описание</p>
                             <NoteBlock
@@ -110,12 +111,14 @@ export default {
         const newsData = ref({
             name: '',
             theme: '',
-            updated: ''
+            updated: '',
+            mainPageText: ''
         });
         const newsDataLock = ref({
             name: '',
             theme: '',
-            updated: ''
+            updated: '',
+            mainPageText: ''
         });
         const disableSaveBtn = ref(false);
         const tinymceScriptSrc = '/plugins/tinymce/tinymce.min.js';
@@ -156,6 +159,7 @@ export default {
                     id
                     name
                     theme
+                    main_page_text
                 }
             }
         `;
@@ -169,16 +173,19 @@ export default {
                 $name: String!,
                 $theme: String!,
                 $updated: String!,
+                $main_page_text: String!,
             ){
                 updateNews(updateNewsInput: {
                     id: $id,
                     name: $name,
                     theme: $theme,
                     updated: $updated,
+                    main_page_text: $main_page_text,
                 }) {
                         id
                         name
                         theme
+                        main_page_text
                     }
                 }
             `, () => ({
@@ -186,6 +193,7 @@ export default {
                         id: Number(route.params.id),
                         name: newsData.value.name,
                         theme: newsData.value.theme,
+                        main_page_text: newsData.value.mainPageText,
                         updated: updatedDate.toFormat("dd MMMM yyyy hh:mm"),
                     },
                 })
@@ -225,10 +233,12 @@ export default {
                 newsData.value.id = refetchQuery.data.new.id;
                 newsData.value.name = refetchQuery.data.new.name;
                 newsData.value.theme = refetchQuery.data.new.theme;
+                newsData.value.mainPageText = refetchQuery.data.new.main_page_text;
 
                 newsDataLock.value.id = refetchQuery.data.new.id;
                 newsDataLock.value.name = refetchQuery.data.new.name;
                 newsDataLock.value.theme = refetchQuery.data.new.theme;
+                newsDataLock.value.mainPageText = refetchQuery.data.new.main_page_text;
             }
         });
 

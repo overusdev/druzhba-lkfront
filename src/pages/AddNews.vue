@@ -29,6 +29,7 @@
                     </div>
                     <div class="q-pt-lg" style="max-width: 1000px">
                         <q-input v-model="newsData.name" label="Заголовок" class="add-new__input q-mb-lg"/>
+                        <q-input v-model="newsData.mainPageText" label="Текст для главной страницы" class="add-new__input q-mb-lg"/>
                         <div class="q-mb-lg">
                             <p class="text">Описание</p>
                             <NoteBlock
@@ -123,12 +124,14 @@ export default {
         const newsData = ref({
             name: '',
             theme: '',
-            date: ''
+            date: '',
+            mainPageText: ''
         });
         const newsDataLock = ref({
             name: '',
             theme: '',
-            date: ''
+            date: '',
+            mainPageText: ''
         });
         const disableSaveBtn = ref(false);
         const { mutate: sendNews, onDone } = useMutation(gql`
@@ -136,22 +139,26 @@ export default {
                 $name: String!,
                 $theme: String!,
                 $date: String!,
+                $main_page_text: String!,
             ){
                 createNews(createNewsInput: { 
                     name: $name,
                     theme: $theme,
                     date: $date,
+                    main_page_text: $main_page_text,
                 }) {
                         id
                         name
                         theme
                         date
+                        main_page_text
                     }
                 }
             `, () => ({
                     variables: {
                         name: newsData.value.name,
                         theme: newsData.value.theme,
+                        main_page_text: newsData.value.mainPageText,
                         date: createDate.toFormat("dd MMMM yyyy hh:mm"),
                     },
                 })
